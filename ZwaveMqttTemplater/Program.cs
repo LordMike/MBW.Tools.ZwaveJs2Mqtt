@@ -14,7 +14,7 @@ using MQTTnet.Formatter;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace ConsoleApp35
+namespace ZwaveMqttTemplater
 {
     class Program
     {
@@ -96,7 +96,7 @@ namespace ConsoleApp35
             foreach (JProperty typeProp in doc.Properties())
             {
                 string type = typeProp.Name;
-                JObject discoveryDocs = typeProp.Value as JObject;
+                JObject discoveryDocs = (JObject)typeProp.Value;
 
                 foreach (KeyValuePair<string, JToken> discoveryDocItem in discoveryDocs)
                 {
@@ -124,7 +124,7 @@ namespace ConsoleApp35
             {
                 foreach (string key in asObj.Properties().Select(s => s.Name).ToArray())
                 {
-                    JToken? item = asObj[key];
+                    JToken item = asObj[key];
                     item = Transform(item, action);
                     asObj[key] = item;
                 }
@@ -147,7 +147,7 @@ namespace ConsoleApp35
             Type type = typeof(Program);
             Assembly assembly = type.Assembly;
 
-            using Stream? strm = assembly.GetManifestResourceStream($"{type.Namespace}.docs.{name}.json");
+            using Stream strm = assembly.GetManifestResourceStream($"{type.Namespace}.docs.{name}.json");
             using StreamReader sr = new StreamReader(strm, Encoding.UTF8);
 
             return JObject.Parse(sr.ReadToEnd());
