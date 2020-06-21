@@ -5,16 +5,16 @@
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
         ],
-        "manufacturer": "Aeotec Limited",
-        "model": "ZWA008 Door Window Sensor 7 (0x0007)",
+        "manufacturer": "AEON Labs",
+        "model": "ZW112 Door Window Sensor 6 (0x0070)",
         "name": "NODE_NAME"
       },
-      "device_class": "door",
-      "json_attributes_topic": "zwave2mqtt/NODE_NAME/32/1/0",
+      "device_class": "window",
+      "json_attributes_topic": "zwave2mqtt/NODE_NAME/48/1/0",
       "name": "NODE_NAME_state",
-      "payload_off": 0,
-      "payload_on": 255,
-      "state_topic": "zwave2mqtt/NODE_NAME/32/1/0",
+      "payload_off": false,
+      "payload_on": true,
+      "state_topic": "zwave2mqtt/NODE_NAME/48/1/0",
       "unique_id": "zwave2mqtt_NODE_NAME_state",
       "value_template": "{{ value_json.value }}"
     }
@@ -25,8 +25,8 @@
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
         ],
-        "manufacturer": "Aeotec Limited",
-        "model": "ZWA008 Door Window Sensor 7 (0x0007)",
+        "manufacturer": "AEON Labs",
+        "model": "ZW112 Door Window Sensor 6 (0x0070)",
         "name": "NODE_NAME"
       },
       "device_class": "battery",

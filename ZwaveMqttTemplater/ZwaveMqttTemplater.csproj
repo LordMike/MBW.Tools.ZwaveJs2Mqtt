@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -13,6 +13,12 @@
   <ItemGroup>
     <None Remove="docs\*.json" />
     <EmbeddedResource Include="docs\*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DeviceConfigsFile.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

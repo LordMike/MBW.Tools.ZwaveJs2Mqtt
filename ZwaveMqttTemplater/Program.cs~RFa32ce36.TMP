@@ -42,7 +42,7 @@ namespace ZwaveMqttTemplater
 
                 DumpConfigs(nodes);
 
-                await HandleHassConfigs(mqttClient);
+                //await HandleHassConfigs(mqttClient);
                 //await HandleDeviceConfigs(mqttClient, nodes);
             }
             finally
@@ -53,27 +53,17 @@ namespace ZwaveMqttTemplater
 
         private static void DumpConfigs(Z2MContainer nodes)
         {
-            var toList = nodes.GetAll();
-
-            toList = nodes.GetByProduct("ZW112 Door Window Sensor 6");
-
-            foreach (var z2MNode in toList)
+            foreach (var z2MNode in nodes.GetAll())
             {
-                var fwConfig = z2MNode.values.Values.FirstOrDefault(s =>
-                    s.class_id == 134 && s.instance == 1 && s.index == 2);
-
                 Console.WriteLine($"{z2MNode.node_id}: {z2MNode.product} ({z2MNode.manufacturer})");
-                Console.WriteLine($"  Name: {z2MNode.name}   fw: {fwConfig?.value}");
 
                 foreach (var (key, value) in z2MNode.values)
                 {
-                    if (value.genre != "config")
+                    if (value.class_id != 112)
                         continue;
 
-                    Console.WriteLine($"  {value.class_id}-{value.instance}-{value.index}: {value.value}");
+                    Console.WriteLine($"  ");
                 }
-
-                Console.WriteLine();
             }
         }
 
@@ -157,12 +147,11 @@ namespace ZwaveMqttTemplater
 
             messages.AddRange(PrepareHassConfigs("AeotecSmartSwitch7", "powerplug_1"));
 
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6_alarmkind", "door_1_1"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_20_2"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_21_2"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_30_1"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_4_2"));
-
+            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6", "door_1_1"));
+            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6", "window_20_2"));
+            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6", "window_21_2"));
+            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6", "door_30_1"));
+            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6", "door_4_2"));
             messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_1_2"));
             messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_1_3"));
             messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_1_4"));
