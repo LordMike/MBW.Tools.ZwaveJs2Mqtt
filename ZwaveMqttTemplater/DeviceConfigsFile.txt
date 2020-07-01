@@ -28,21 +28,21 @@ name:wallswitch_30_2	112-1-4	0
 name:wallswitch_30_2	112-1-20	1
 name:wallswitch_30_2	112-1-22	50065152	# static color for ON state
 
-### Aeotec door window sensor 6
-# http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW112-B&cert=ZC10-16010007
-# Send 0xFF on open and 0x00 on close
-product:ZW112 Door Window Sensor 6	112-1-1	0
-
-# Disable battery
-product:ZW112 Door Window Sensor 6	112-1-101	0
-
-# Use Basic Set
-product:ZW112 Door Window Sensor 6	112-1-121	1
-
-### Aeotec door window sensor 7
-# http://manual.zwave.eu/backend/make.php?lang=EN&sku=AEOEZWA008&cert=
-# Disable tilt sensor
-product:ZWA008 Door Window Sensor 7	112-1-14	0
+# ### Aeotec door window sensor 6
+# # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW112-B&cert=ZC10-16010007
+# # Send 0xFF on open and 0x00 on close
+# product:ZW112 Door Window Sensor 6	112-1-1	0
+# 
+# # Disable battery
+# product:ZW112 Door Window Sensor 6	112-1-101	0
+# 
+# # Use Basic Set
+# product:ZW112 Door Window Sensor 6	112-1-121	1
+# 
+# ### Aeotec door window sensor 7
+# # http://manual.zwave.eu/backend/make.php?lang=EN&sku=AEOEZWA008&cert=
+# # Disable tilt sensor
+# product:ZWA008 Door Window Sensor 7	112-1-14	0
 
 ### Aeotec doorbell
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW162-C&cert=ZC10-19046416&type=mini

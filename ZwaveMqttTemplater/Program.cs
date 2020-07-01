@@ -41,9 +41,10 @@ namespace ZwaveMqttTemplater
                 Z2MContainer nodes = await GetNodes(mqttClient);
 
                 DumpConfigs(nodes);
+                //DumpFirmwares(nodes);
 
-                await HandleHassConfigs(mqttClient);
-                //await HandleDeviceConfigs(mqttClient, nodes);
+                //await HandleHassConfigs(mqttClient);
+                await HandleDeviceConfigs(mqttClient, nodes);
             }
             finally
             {
@@ -54,8 +55,6 @@ namespace ZwaveMqttTemplater
         private static void DumpConfigs(Z2MContainer nodes)
         {
             var toList = nodes.GetAll();
-
-            toList = nodes.GetByProduct("ZW112 Door Window Sensor 6");
 
             foreach (var z2MNode in toList)
             {
@@ -77,6 +76,21 @@ namespace ZwaveMqttTemplater
             }
         }
 
+        private static void DumpFirmwares(Z2MContainer nodes)
+        {
+            var toList = nodes.GetAll()
+                .OrderBy(s=>s.manufacturerid)
+                .ThenBy(s=>s.productid);
+
+            foreach (var z2MNode in toList)
+            {
+                var fwConfig = z2MNode.values.Values.FirstOrDefault(s =>
+                    s.class_id == 134 && s.instance == 1 && s.index == 2);
+
+                Console.WriteLine($"{z2MNode.node_id}: {z2MNode.product} ({z2MNode.manufacturer})  fw: {fwConfig?.value}");
+            }
+        }
+
         private static async Task<Z2MContainer> GetNodes(IMqttClient mqttClient)
         {
             ManualResetEvent stopEvent = new ManualResetEvent(false);
@@ -87,6 +101,9 @@ namespace ZwaveMqttTemplater
 
             mqttClient.UseApplicationMessageReceivedHandler(eventArgs =>
             {
+                if (eventArgs.ApplicationMessage.Payload == null)
+                    return;
+
                 string str = eventArgs.ApplicationMessage.ConvertPayloadToString();
 
                 Z2MApiCallResult<List<Z2MNode>> nodes =
@@ -126,6 +143,9 @@ namespace ZwaveMqttTemplater
 
             if (container == null)
                 throw new Exception("");
+            
+            // clear this output
+            await mqttClient.PublishAsync("zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes", new byte[0]); 
 
             return container;
         }
@@ -170,6 +190,7 @@ namespace ZwaveMqttTemplater
             messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_3_2"));
             messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_4_3"));
             messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_5_2"));
+            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_22_1"));
 
             //messages.AddRange(Prepare("LogicsoftZHC5010", "wallswitch_3"));
 
@@ -177,6 +198,8 @@ namespace ZwaveMqttTemplater
             messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_1"));
             messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_30_1"));
             messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_30_2"));
+            messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_20"));
+            messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_21"));
             messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_22"));
             messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_3"));
             messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_4"));
@@ -309,7 +332,7 @@ namespace ZwaveMqttTemplater
                     Payload = setValueBytes
                 });
 
-                Console.WriteLine($"Sending ({node.product} / {key}) {currentVal.label}: {value}");
+                Console.WriteLine($"Sending ({node.product} \"{node.name}\" / {key}) {currentVal.label}: {value}");
             }
 
             if (messages.Any())
