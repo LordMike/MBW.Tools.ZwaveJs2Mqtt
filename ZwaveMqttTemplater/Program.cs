@@ -40,7 +40,7 @@ namespace ZwaveMqttTemplater
             {
                 Z2MContainer nodes = await GetNodes(mqttClient);
 
-                DumpConfigs(nodes);
+                //DumpConfigs(nodes);
                 //DumpFirmwares(nodes);
 
                 //await HandleHassConfigs(mqttClient);

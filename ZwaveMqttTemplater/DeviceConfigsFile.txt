@@ -49,7 +49,7 @@ name:wallswitch_30_2	112-1-22	50065152	# static color for ON state
 # Sound levels
 product:ZW162 Doorbell 6	121-1-2	0
 product:ZW162 Doorbell 6	121-2-2	0
-product:ZW162 Doorbell 6	121-3-2	25
+product:ZW162 Doorbell 6	121-3-2	25 # Doorbell 1
 product:ZW162 Doorbell 6	121-4-2	0
 product:ZW162 Doorbell 6	121-5-2	0
 product:ZW162 Doorbell 6	121-6-2	0
@@ -58,21 +58,18 @@ product:ZW162 Doorbell 6	121-8-2	0
 
 # Ding dong chime
 product:ZW162 Doorbell 6	121-3-3	1
+product:ZW164 Indoor Siren 6	121-4-3	1
 
 ### Aeotec indoor siren
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW164-A&cert=ZC10-19046417&type=mini
 # Sound levels
 product:ZW164 Indoor Siren 6	121-1-2	0
 product:ZW164 Indoor Siren 6	121-2-2	0
-product:ZW164 Indoor Siren 6	121-3-2	25
-product:ZW164 Indoor Siren 6	121-4-2	25
-product:ZW164 Indoor Siren 6	121-5-2	25
+product:ZW164 Indoor Siren 6	121-3-2	0
+product:ZW164 Indoor Siren 6	121-4-2	25 # Doorbell 2 (for some reason, doorbell 1 is aka. "Tampering")
+product:ZW164 Indoor Siren 6	121-5-2	0
 product:ZW164 Indoor Siren 6	121-6-2	0
 product:ZW164 Indoor Siren 6	121-7-2	0
 product:ZW164 Indoor Siren 6	121-8-2	0
 product:ZW164 Indoor Siren 6	121-9-2	0
 
-# Ding dong chime
-product:ZW164 Indoor Siren 6	121-3-3	1
-product:ZW164 Indoor Siren 6	121-4-3	1
-product:ZW164 Indoor Siren 6	121-5-3	1
