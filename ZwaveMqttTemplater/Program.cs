@@ -337,6 +337,9 @@ namespace ZwaveMqttTemplater
 
             if (messages.Any())
             {
+                Console.WriteLine("Press any key to send messages");
+                Console.ReadLine();
+
                 await mqttClient.PublishAsync(messages);
             }
         }
