@@ -79,3 +79,23 @@ product:ZW164 Indoor Siren 6	121-7-2	0
 product:ZW164 Indoor Siren 6	121-8-2	0
 product:ZW164 Indoor Siren 6	121-9-2	0
 
+### ZW099 Smart Dimmer 6 (AEON Labs) 
+# http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW099-A02&cert=ZC10-17035455
+product:ZW099 Smart Dimmer 6	112-1-81	0	# Disable LED mode
+
+# Readings frequency
+product:ZW099 Smart Dimmer 6	112-1-101	7	# Report W, V, kWh
+product:ZW099 Smart Dimmer 6	112-1-111	600	# Report every Ns
+
+product:ZW099 Smart Dimmer 6	112-1-90	1	# Report on change
+product:ZW099 Smart Dimmer 6	112-1-91	25	# Report when 25W change
+product:ZW099 Smart Dimmer 6	112-1-92	20	# Report when 20% change
+
+
+### ZW175 Smart Switch 7 (Aeotec Limited) 
+# http://manuals-backend.z-wave.info/make.php?lang=en&sku=AEOEZW175&cert=ZC10-19066544&type=mini
+product:ZW175 Smart Switch 7	112-1-81	0	# Disable LED mode
+
+# Readings frequency
+product:ZW175 Smart Switch 7	112-1-101	7	# Report W, V, kWh
+product:ZW175 Smart Switch 7	112-1-111	600	# Report every Ns

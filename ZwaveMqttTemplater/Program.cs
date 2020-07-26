@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -54,17 +54,17 @@ namespace ZwaveMqttTemplater
 
         private static void DumpConfigs(Z2MContainer nodes)
         {
-            var toList = nodes.GetAll();
+            IEnumerable<Z2MNode> toList = nodes.GetAll();
 
-            foreach (var z2MNode in toList)
+            foreach (Z2MNode z2MNode in toList)
             {
-                var fwConfig = z2MNode.values.Values.FirstOrDefault(s =>
+                Z2MValue fwConfig = z2MNode.values.Values.FirstOrDefault(s =>
                     s.class_id == 134 && s.instance == 1 && s.index == 2);
 
                 Console.WriteLine($"{z2MNode.node_id}: {z2MNode.product} ({z2MNode.manufacturer})");
                 Console.WriteLine($"  Name: {z2MNode.name}   fw: {fwConfig?.value}");
 
-                foreach (var (key, value) in z2MNode.values)
+                foreach ((string key, Z2MValue value) in z2MNode.values)
                 {
                     if (value.genre != "config")
                         continue;
@@ -78,13 +78,13 @@ namespace ZwaveMqttTemplater
 
         private static void DumpFirmwares(Z2MContainer nodes)
         {
-            var toList = nodes.GetAll()
-                .OrderBy(s=>s.manufacturerid)
-                .ThenBy(s=>s.productid);
+            IOrderedEnumerable<Z2MNode> toList = nodes.GetAll()
+                .OrderBy(s => s.manufacturerid)
+                .ThenBy(s => s.productid);
 
-            foreach (var z2MNode in toList)
+            foreach (Z2MNode z2MNode in toList)
             {
-                var fwConfig = z2MNode.values.Values.FirstOrDefault(s =>
+                Z2MValue fwConfig = z2MNode.values.Values.FirstOrDefault(s =>
                     s.class_id == 134 && s.instance == 1 && s.index == 2);
 
                 Console.WriteLine($"{z2MNode.node_id}: {z2MNode.product} ({z2MNode.manufacturer})  fw: {fwConfig?.value}");
@@ -111,9 +111,9 @@ namespace ZwaveMqttTemplater
 
                 container = new Z2MContainer(nodes.Result);
 
-                foreach (var z2MNode in nodes.Result)
+                foreach (Z2MNode z2MNode in nodes.Result)
                 {
-                    foreach (var (key, value) in z2MNode.values)
+                    foreach ((string key, Z2MValue value) in z2MNode.values)
                     {
                         switch (value.type)
                         {
@@ -143,9 +143,9 @@ namespace ZwaveMqttTemplater
 
             if (container == null)
                 throw new Exception("");
-            
+
             // clear this output
-            await mqttClient.PublishAsync("zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes", new byte[0]); 
+            await mqttClient.PublishAsync("zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes", new byte[0]);
 
             return container;
         }
@@ -263,23 +263,8 @@ namespace ZwaveMqttTemplater
 
                 foreach (Z2MNode z2MNode in nodes)
                 {
-                    var valueSpec = z2MContainer.GetCurrentValue(z2MNode.node_id, @class, instance, index);
-
-                    object newVal;
-                    switch (valueSpec.type)
-                    {
-                        case "int":
-                            newVal = Convert.ToInt32(match.Groups["value"].Value);
-                            break;
-                        case "byte":
-                            newVal = Convert.ToByte(match.Groups["value"].Value);
-                            break;
-                        case "list":
-                            newVal = valueSpec.values[Convert.ToInt32(match.Groups["value"].Value)];
-                            break;
-                        default:
-                            throw new Exception();
-                    }
+                    Z2MValue valueSpec = z2MContainer.GetCurrentValue(z2MNode.node_id, @class, instance, index);
+                    object newVal = ConvertZ2MValue(valueSpec, match.Groups["value"].Value);
 
                     values[new ValueKey
                     {
@@ -300,12 +285,13 @@ namespace ZwaveMqttTemplater
             //}
 
             string topic = "zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/setValue/set";
-            foreach (var (key, value) in values.OrderBy(s => s.Key.NodeId).ThenBy(s => s.Key.Instance).ThenBy(s => s.Key.Index))
+            foreach ((ValueKey key, object value) in values.OrderBy(s => s.Key.NodeId).ThenBy(s => s.Key.Instance).ThenBy(s => s.Key.Index))
             {
                 // Get existing value
-                var node = z2MContainer.GetNode(key.NodeId);
-                var currentVal = z2MContainer.GetCurrentValue(key.NodeId, key.Class, key.Instance, key.Index);
-                if (value.Equals(currentVal.value))
+                Z2MNode node = z2MContainer.GetNode(key.NodeId);
+                var z2MValue = z2MContainer.GetCurrentValue(key.NodeId, key.Class, key.Instance, key.Index);
+                object currentVal = ConvertZ2MValue(z2MValue);
+                if (value.Equals(currentVal))
                 {
                     // Skip this
                     continue;
@@ -331,7 +317,7 @@ namespace ZwaveMqttTemplater
                     Payload = setValueBytes
                 });
 
-                Console.WriteLine($"Sending ({node.product} \"{node.name}\" / {key}) {currentVal.label}: {value}");
+                Console.WriteLine($"Sending ({node.product} \"{node.name}\" / {key}) {z2MValue.label}: {currentVal} => {value}");
             }
 
             if (messages.Any())
@@ -340,6 +326,40 @@ namespace ZwaveMqttTemplater
                 Console.ReadLine();
 
                 await mqttClient.PublishAsync(messages);
+            }
+        }
+
+        private static object ConvertZ2MValue(Z2MValue spec, object val = null)
+        {
+            val ??= spec.value;
+
+            switch (spec.type)
+            {
+                case "short":
+                    return Convert.ToInt16(val);
+                case "int":
+                    return Convert.ToInt32(val);
+                case "byte":
+                    return Convert.ToByte(val);
+                case "list":
+                    {
+                        if (val is string asString && int.TryParse(asString, out int asInt))
+                            return spec.values[asInt];
+                        return val;
+                    }
+                case "bool":
+                    {
+                        if (val is string asString)
+                        {
+                            if (int.TryParse(asString, out int asInt))
+                                return asInt == 1;
+                            if (bool.TryParse(asString, out var asBool))
+                                return asBool;
+                        }
+                        throw new Exception();
+                    }
+                default:
+                    throw new Exception();
             }
         }
 
