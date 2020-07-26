@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -172,10 +172,9 @@ namespace ZwaveMqttTemplater
             stopEvent.WaitOne();
 
             List<MqttApplicationMessage> messages = new List<MqttApplicationMessage>();
-            messages.AddRange(PrepareHassConfigs("AeotecSmartSwitch7", "pool_uv"));
-            messages.AddRange(PrepareHassConfigs("AeotecSmartDimmer6", "pool_pump"));
-
             messages.AddRange(PrepareHassConfigs("AeotecSmartSwitch7", "powerplug_1"));
+            messages.AddRange(PrepareHassConfigs("AeotecSmartSwitch7", "powerplug_2"));
+            messages.AddRange(PrepareHassConfigs("AeotecSmartDimmer6", "powerplug_3"));
 
             messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6_alarmkind", "door_1_1"));
             messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_20_2"));
