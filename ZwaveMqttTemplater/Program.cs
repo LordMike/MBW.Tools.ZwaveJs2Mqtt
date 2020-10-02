@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -349,11 +349,13 @@ namespace ZwaveMqttTemplater
                     }
                 case "bool":
                     {
+                        if (val is bool asBool)
+                            return asBool;
                         if (val is string asString)
                         {
                             if (int.TryParse(asString, out int asInt))
                                 return asInt == 1;
-                            if (bool.TryParse(asString, out var asBool))
+                            if (bool.TryParse(asString, out asBool))
                                 return asBool;
                         }
                         throw new Exception();
