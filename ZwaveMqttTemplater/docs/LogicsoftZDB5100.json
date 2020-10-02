@@ -2,10 +2,10 @@
   "light": {
     "dimmer": {
       "brightness_command_topic": "zwave2mqtt/NODE_NAME/38/6/0/set",
-      "brightness_scale": 99,
+      "brightness_scale": 255,
       "brightness_state_topic": "zwave2mqtt/NODE_NAME/38/6/0",
-      "brightness_value_template": "{{ value_json.value }}",
-      "command_topic": "zwave2mqtt/NODE_NAME/38/6/0/set",
+      "brightness_value_template": "{{ value_json.value * 2.55 }}",
+      "command_topic": "zwave2mqtt/NODE_NAME/37/6/0/set",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -15,10 +15,10 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_dimmer",
-      "on_command_type": "first",
-      "payload_on": 255,
+      "on_command_type": "brightness",
+      "payload_on": "ON",
       "state_topic": "zwave2mqtt/NODE_NAME/38/6/0",
-      "state_value_template": "{{ \"OFF\" if value_json.value == 0 else 255 }}",
+      "state_value_template": "{{ \"OFF\" if value_json.value == 0 else \"ON\" }}",
       "unique_id": "zwave2mqtt_NODE_NAME_dimmer"
     },
     "rgb_1": {

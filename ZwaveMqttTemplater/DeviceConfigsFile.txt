@@ -30,9 +30,9 @@ product:ZDB5100 Matrix	112-1-44	0
 # Disable dimmer on some switches
 name:wallswitch_30_2	112-1-4	0
 
-# Enable LED to follow state one some switches
-name:wallswitch_30_2	112-1-20	1
-name:wallswitch_30_2	112-1-22	50065152	# static color for ON state
+## Enable LED to follow state one some switches
+#name:wallswitch_30_2	112-1-20	1
+#name:wallswitch_30_2	112-1-22	50065152	# static color for ON state
 
 # ### Aeotec door window sensor 6
 # # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW112-B&cert=ZC10-16010007
@@ -88,8 +88,8 @@ product:ZW099 Smart Dimmer 6	112-1-101	7	# Report W, V, kWh
 product:ZW099 Smart Dimmer 6	112-1-111	600	# Report every Ns
 
 product:ZW099 Smart Dimmer 6	112-1-90	1	# Report on change
-product:ZW099 Smart Dimmer 6	112-1-91	25	# Report when 25W change
-product:ZW099 Smart Dimmer 6	112-1-92	20	# Report when 20% change
+product:ZW099 Smart Dimmer 6	112-1-91	25	# Report when N W change
+product:ZW099 Smart Dimmer 6	112-1-92	20	# Report when N% W-change
 
 
 ### ZW175 Smart Switch 7 (Aeotec Limited) 
@@ -99,3 +99,7 @@ product:ZW175 Smart Switch 7	112-1-81	0	# Disable LED mode
 # Readings frequency
 product:ZW175 Smart Switch 7	112-1-101	7	# Report W, V, kWh
 product:ZW175 Smart Switch 7	112-1-111	600	# Report every Ns
+
+product:ZW175 Smart Switch 7	112-1-91	20	# Report when N W change
+product:ZW175 Smart Switch 7	112-1-92	0	# Report when N kWh change
+product:ZW175 Smart Switch 7	112-1-93	0	# Report when N A change

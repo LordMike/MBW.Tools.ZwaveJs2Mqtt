@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,8 +43,8 @@ namespace ZwaveMqttTemplater
                 //DumpConfigs(nodes);
                 //DumpFirmwares(nodes);
 
-                //await HandleHassConfigs(mqttClient);
-                await HandleDeviceConfigs(mqttClient, nodes);
+                await HandleHassConfigs(mqttClient);
+                //await HandleDeviceConfigs(mqttClient, nodes);
             }
             finally
             {
