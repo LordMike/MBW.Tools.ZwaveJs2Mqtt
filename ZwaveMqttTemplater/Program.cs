@@ -43,8 +43,8 @@ namespace ZwaveMqttTemplater
                 //DumpConfigs(nodes);
                 //DumpFirmwares(nodes);
 
-                await HandleHassConfigs(mqttClient);
-                //await HandleDeviceConfigs(mqttClient, nodes);
+                //await HandleHassConfigs(mqttClient);
+                await HandleDeviceConfigs(mqttClient, nodes);
             }
             finally
             {

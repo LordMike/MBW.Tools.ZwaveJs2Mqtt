@@ -18,7 +18,7 @@ product:ZDB5100 Matrix	112-1-47	0
 product:ZDB5100 Matrix	112-1-5	10
 
 # Dimming over Ns
-product:ZDB5100 Matrix	112-1-2	4
+product:ZDB5100 Matrix	112-1-2	2
 
 # On/off takes Ns
 product:ZDB5100 Matrix	112-1-3	0
