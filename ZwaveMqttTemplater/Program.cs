@@ -155,12 +155,13 @@ namespace ZwaveMqttTemplater
             });
 
 
-            await mqttClient.PublishAsync("zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes", new byte[0]); // clear old output
-            await mqttClient.PublishAsync("zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes/set", new byte[0]); // request new doc
-
+            await mqttClient.PublishAsync("zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes", new byte[0]); // clear old output
+          
             await mqttClient.SubscribeAsync(
-                new TopicFilter { Topic = "zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes" }
+                new TopicFilter { Topic = "zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes" }
             );
+
+            await mqttClient.PublishAsync("zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes/set", new byte[0]); // request new doc
 
             stopEvent.WaitOne();
             timer.Change(Timeout.Infinite, Timeout.Infinite);
@@ -169,7 +170,7 @@ namespace ZwaveMqttTemplater
                 throw new Exception("");
 
             // clear this output
-            await mqttClient.PublishAsync("zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes", new byte[0]);
+            await mqttClient.PublishAsync("zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes", new byte[0]);
 
             return container;
         }
@@ -297,12 +298,12 @@ namespace ZwaveMqttTemplater
             // Prepare messages, send MQTT
             List<MqttApplicationMessage> messages = new List<MqttApplicationMessage>();
 
-            //zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/setValue/set
+            //zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/setValue/set
             //{
             //    "args": [node, class, instance, index, value]
             //}
 
-            string topic = "zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/setValue/set";
+            string topic = "zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/setValue/set";
             foreach ((ValueKey key, object value) in values.OrderBy(s => s.Key.NodeId).ThenBy(s => s.Key.Instance).ThenBy(s => s.Key.Index))
             {
                 // Get existing value
