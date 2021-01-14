@@ -2,7 +2,7 @@
 # Enable dimming
 # Trailing edge dimming
 # Leading edge dimming
-product:ZDB5100 Matrix	112-1-4	Leading edge dimming
+product:ZDB5100 Matrix	112-1-4	Trailing edge dimming
 
 # Remove default colors
 product:ZDB5100 Matrix	112-1-22	0
