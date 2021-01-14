@@ -11,6 +11,7 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Options;
+using MQTTnet.Client.Unsubscribing;
 using MQTTnet.Formatter;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -36,15 +37,38 @@ namespace ZwaveMqttTemplater
 
             await mqttClient.ConnectAsync(mqttOptions, default);
 
+            MqttStore store = new MqttStore(mqttClient);
+
+            await store.Load("homeassistant/#", "zwave2mqtt/#", "zwavejs2mqtt/#");
+
             try
             {
-                Z2MContainer nodes = await GetNodes(mqttClient);
+                //Z2MContainer nodes = await GetNodes(mqttClient);
 
                 //DumpConfigs(nodes);
                 //DumpFirmwares(nodes);
 
-                //await HandleHassConfigs(mqttClient);
-                await HandleDeviceConfigs(mqttClient, nodes);
+                await HandleHassConfigs(store);
+                //await HandleDeviceConfigs(mqttClient, nodes);
+
+                List<string> topics = store.GetTopicsToSet().ToList();
+
+                if (topics.Any())
+                {
+                    Console.WriteLine("Sending to:");
+
+                    foreach (string topic in topics)
+                        Console.WriteLine("> " + topic);
+
+                    Console.WriteLine("Ok?");
+                    Console.ReadLine();
+
+                    await store.FlushTopicsToSet();
+                }
+                else
+                {
+                    Console.WriteLine("No topics to set");
+                }
             }
             finally
             {
@@ -150,73 +174,67 @@ namespace ZwaveMqttTemplater
             return container;
         }
 
-        private static async Task HandleHassConfigs(IMqttClient mqttClient)
+        private static async Task HandleHassConfigs(MqttStore store)
         {
-            ManualResetEvent stopEvent = new ManualResetEvent(false);
-            Timer timer = new Timer(state => stopEvent.Set());
-            timer.Change(2500, Timeout.Infinite);
-
-            Dictionary<string, byte[]> knownConfigs = new Dictionary<string, byte[]>();
-
-            mqttClient.UseApplicationMessageReceivedHandler(eventArgs =>
+            void HandleHassConfigs(string product, string nodeName)
             {
-                knownConfigs[eventArgs.ApplicationMessage.Topic] = eventArgs.ApplicationMessage.Payload;
-                timer.Change(500, Timeout.Infinite);
-            });
+                JObject doc = ReadDoc("docs", product);
 
-            await mqttClient.SubscribeAsync(
-                new TopicFilter { Topic = $"{HassPrefix}/+/+/config" },
-                new TopicFilter { Topic = $"{HassPrefix}/+/+/+/config" }
-            );
-
-            stopEvent.WaitOne();
-
-            List<MqttApplicationMessage> messages = new List<MqttApplicationMessage>();
-            messages.AddRange(PrepareHassConfigs("AeotecSmartSwitch7", "powerplug_1"));
-            messages.AddRange(PrepareHassConfigs("AeotecSmartSwitch7", "powerplug_2"));
-            messages.AddRange(PrepareHassConfigs("AeotecSmartDimmer6", "powerplug_3"));
-
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6_alarmkind", "door_1_1"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_20_2"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_21_2"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_30_1"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_4_2"));
-
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_1_2"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_1_3"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_1_4"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_2_2"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_3_2"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_4_3"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_5_2"));
-            messages.AddRange(PrepareHassConfigs("AeotecDoorWindowSensor7", "window_22_1"));
-
-            //messages.AddRange(Prepare("LogicsoftZHC5010", "wallswitch_3"));
-
-            messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_2"));
-            messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_1"));
-            messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_30_1"));
-            messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_30_2"));
-            messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_20"));
-            messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_21"));
-            messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_22"));
-            messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_3"));
-            messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_4"));
-            messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_5"));
-            messages.AddRange(PrepareHassConfigs("LogicsoftZDB5100", "wallswitch_31"));
-
-            messages.RemoveAll(x =>
-                knownConfigs.TryGetValue(x.Topic, out byte[] existingDoc) && existingDoc.SequenceEqual(x.Payload));
-
-            if (messages.Any())
-            {
-                await mqttClient.PublishAsync(messages);
-
-                foreach (MqttApplicationMessage message in messages)
+                // Replace
+                doc = (JObject)Transform(doc, token =>
                 {
-                    Console.WriteLine($"Sent {message.Topic}");
+                    if (token.Type == JTokenType.String)
+                        return JToken.FromObject(token.Value<string>().Replace("NODE_NAME", nodeName));
+
+                    return token;
+                });
+
+                foreach (JProperty typeProp in doc.Properties())
+                {
+                    string type = typeProp.Name;
+                    JObject discoveryDocs = (JObject)typeProp.Value;
+
+                    foreach (KeyValuePair<string, JToken> discoveryDocItem in discoveryDocs)
+                    {
+                        string entityName = discoveryDocItem.Key;
+                        JToken discoveryDoc = discoveryDocItem.Value;
+                        string discoveryTopic = $"{HassPrefix}/{type}/{nodeName}/{entityName}/config";
+
+                        store.Set(discoveryTopic, JsonConvert.SerializeObject(discoveryDoc), true)
+                    }
                 }
             }
+
+            HandleHassConfigs("AeotecSmartSwitch7", "powerplug_1");
+            HandleHassConfigs("AeotecSmartSwitch7", "powerplug_2");
+            HandleHassConfigs("AeotecSmartDimmer6", "powerplug_3");
+
+            HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "door_1_1");
+            HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_20_2");
+            HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_21_2");
+            HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_30_1");
+            HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_4_2");
+
+            HandleHassConfigs("AeotecDoorWindowSensor7", "window_1_2");
+            HandleHassConfigs("AeotecDoorWindowSensor7", "window_1_3");
+            HandleHassConfigs("AeotecDoorWindowSensor7", "window_1_4");
+            HandleHassConfigs("AeotecDoorWindowSensor7", "window_2_2");
+            HandleHassConfigs("AeotecDoorWindowSensor7", "window_3_2");
+            HandleHassConfigs("AeotecDoorWindowSensor7", "window_4_3");
+            HandleHassConfigs("AeotecDoorWindowSensor7", "window_5_2");
+            HandleHassConfigs("AeotecDoorWindowSensor7", "window_22_1");
+
+            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_2");
+            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_1");
+            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_30_1");
+            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_30_2");
+            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_20");
+            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_21");
+            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_22");
+            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_3");
+            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_4");
+            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_5");
+            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_31");
         }
 
         private static async Task HandleDeviceConfigs(IMqttClient mqttClient, Z2MContainer z2MContainer)
@@ -289,7 +307,7 @@ namespace ZwaveMqttTemplater
             {
                 // Get existing value
                 Z2MNode node = z2MContainer.GetNode(key.NodeId);
-                var z2MValue = z2MContainer.GetCurrentValue(key.NodeId, key.Class, key.Instance, key.Index);
+                Z2MValue z2MValue = z2MContainer.GetCurrentValue(key.NodeId, key.Class, key.Instance, key.Index);
                 object currentVal = ConvertZ2MValue(z2MValue);
                 if (value.Equals(currentVal))
                 {
@@ -362,42 +380,6 @@ namespace ZwaveMqttTemplater
                     }
                 default:
                     throw new Exception();
-            }
-        }
-
-        private static IEnumerable<MqttApplicationMessage> PrepareHassConfigs(string product, string nodeName)
-        {
-            JObject doc = ReadDoc("docs", product);
-
-            // Replace
-            doc = (JObject)Transform(doc, token =>
-            {
-                if (token.Type == JTokenType.String)
-                    return JToken.FromObject(token.Value<string>().Replace("NODE_NAME", nodeName));
-
-                return token;
-            });
-
-            foreach (JProperty typeProp in doc.Properties())
-            {
-                string type = typeProp.Name;
-                JObject discoveryDocs = (JObject)typeProp.Value;
-
-                foreach (KeyValuePair<string, JToken> discoveryDocItem in discoveryDocs)
-                {
-                    string entityName = discoveryDocItem.Key;
-                    JToken discoveryDoc = discoveryDocItem.Value;
-                    string discoveryTopic = $"{HassPrefix}/{type}/{nodeName}/{entityName}/config";
-
-                    byte[] discoveryBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(discoveryDoc));
-
-                    yield return new MqttApplicationMessage
-                    {
-                        Topic = discoveryTopic,
-                        Retain = true,
-                        Payload = discoveryBytes
-                    };
-                }
             }
         }
 
