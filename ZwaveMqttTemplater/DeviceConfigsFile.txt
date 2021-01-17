@@ -39,16 +39,17 @@ name:wallswitch_30_2	112-0-4	0
 # ### Aeotec door window sensor 6
 # # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW112-B&cert=ZC10-16010007
 # # Send 0xFF on open and 0x00 on close
-# product:ZW112 Door Window Sensor 6	112-0-1	0
+# product:ZW112	112-0-1	0
 # 
 # # Disable battery
-# product:ZW112 Door Window Sensor 6	112-0-101	0
+# product:ZW112	112-0-101	0
 # 
 # # Use Basic Set
-# product:ZW112 Door Window Sensor 6	112-0-121	1
+# product:ZW112	112-0-121	1
 
 ### Aeotec door window sensor 7
 # http://manual.zwave.eu/backend/make.php?lang=EN&sku=AEOEZWA008&cert=
+# http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZWA008-C&cert=ZC10-19066568
 # Disable tilt sensor
 product:ZWA008	112-0-14	0
 
