@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -166,7 +166,7 @@ namespace ZwaveMqttTemplater
             timer.Change(Timeout.Infinite, Timeout.Infinite);
 
             if (container == null)
-                throw new Exception("");
+                throw new Exception();
 
             // clear this output
             await mqttClient.PublishAsync("zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes", new byte[0]);
@@ -200,7 +200,7 @@ namespace ZwaveMqttTemplater
                         JToken discoveryDoc = discoveryDocItem.Value;
                         string discoveryTopic = $"{HassPrefix}/{type}/{nodeName}/{entityName}/config";
 
-                        store.Set(discoveryTopic, JsonConvert.SerializeObject(discoveryDoc), true)
+                        store.Set(discoveryTopic, JsonConvert.SerializeObject(discoveryDoc), true);
                     }
                 }
             }
@@ -237,7 +237,7 @@ namespace ZwaveMqttTemplater
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_31");
         }
 
-        private static async Task HandleDeviceConfigs(IMqttClient mqttClient, Z2MContainer z2MContainer)
+        private static async Task HandleDeviceConfigs(MqttStore store, Z2MContainer z2MContainer)
         {
             string[] configLines = await File.ReadAllLinesAsync("DeviceConfigsFile.txt");
 
@@ -279,7 +279,7 @@ namespace ZwaveMqttTemplater
                 int instance = Convert.ToInt32(match.Groups["instance"].Value);
                 int index = Convert.ToInt32(match.Groups["index"].Value);
 
-                foreach (Z2MNode z2MNode in nodes)
+                foreach (Z2MNode z2MNode in nodes.Where(s => s.node_id == 9))
                 {
                     Z2MValue valueSpec = z2MContainer.GetCurrentValue(z2MNode.node_id, @class, instance, index);
                     object newVal = ConvertZ2MValue(valueSpec, match.Groups["value"].Value);
@@ -327,23 +327,7 @@ namespace ZwaveMqttTemplater
                     }
                 };
 
-                byte[] setValueBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(setValueArgs));
-
-                messages.Add(new MqttApplicationMessage
-                {
-                    Topic = topic,
-                    Payload = setValueBytes
-                });
-
-                Console.WriteLine($"Sending ({node.product} \"{node.name}\" / {key}) {z2MValue.label}: {currentVal} => {value}");
-            }
-
-            if (messages.Any())
-            {
-                Console.WriteLine("Press any key to send messages");
-                Console.ReadLine();
-
-                await mqttClient.PublishAsync(messages);
+                store.SetBlindly(topic, JsonConvert.SerializeObject(setValueArgs));
             }
         }
 
