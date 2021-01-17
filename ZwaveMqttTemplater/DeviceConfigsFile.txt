@@ -46,11 +46,11 @@ name:wallswitch_30_2	112-0-4	0
 # 
 # # Use Basic Set
 # product:ZW112 Door Window Sensor 6	112-0-121	1
-# 
-# ### Aeotec door window sensor 7
-# # http://manual.zwave.eu/backend/make.php?lang=EN&sku=AEOEZWA008&cert=
-# # Disable tilt sensor
-# product:ZWA008 Door Window Sensor 7	112-0-14	0
+
+### Aeotec door window sensor 7
+# http://manual.zwave.eu/backend/make.php?lang=EN&sku=AEOEZWA008&cert=
+# Disable tilt sensor
+product:ZWA008	112-0-14	0
 
 ### Aeotec doorbell
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW162-C&cert=ZC10-19046416&type=mini

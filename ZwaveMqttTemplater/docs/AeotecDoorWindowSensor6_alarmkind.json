@@ -10,11 +10,11 @@
         "name": "NODE_NAME"
       },
       "device_class": "window",
-      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/48/1/0",
+      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/113/0/Access_Control/Door_state",
       "name": "NODE_NAME_state",
       "payload_off": false,
       "payload_on": true,
-      "state_topic": "zwavejs2mqtt/NODE_NAME/48/1/0",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/113/0/Access_Control/Door_state",
       "unique_id": "zwave2mqtt_NODE_NAME_state",
       "value_template": "{{ value_json.value }}"
     }

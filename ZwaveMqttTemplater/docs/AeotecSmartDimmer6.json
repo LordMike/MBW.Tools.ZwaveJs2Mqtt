@@ -1,11 +1,11 @@
 ﻿{
   "light": {
     "dimmer": {
-      "brightness_command_topic": "zwavejs2mqtt/NODE_NAME/38/1/0/set",
+      "brightness_command_topic": "zwavejs2mqtt/NODE_NAME/38/1/targetValue/set",
       "brightness_scale": 99,
-      "brightness_state_topic": "zwavejs2mqtt/NODE_NAME/38/1/0",
+      "brightness_state_topic": "zwavejs2mqtt/NODE_NAME/38/1/currentValue",
       "brightness_value_template": "{{ value_json.value }}",
-      "command_topic": "zwavejs2mqtt/NODE_NAME/38/1/0/set",
+      "command_topic": "zwavejs2mqtt/NODE_NAME/1/targetValue",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -16,12 +16,12 @@
       },
       "name": "NODE_NAME_dimmer",
       "on_command_type": "brightness",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/38/1/0",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/38/1/currentValue",
       "state_value_template": "{{ \"OFF\" if value_json.value == 0 else \"ON\" }}",
       "unique_id": "zwave2mqtt_NODE_NAME_dimmer"
     },
     "rgb": {
-      "command_topic": "zwavejs2mqtt/NODE_NAME/51/1/0/set",
+      "command_topic": "zwavejs2mqtt/NODE_NAME/51/2/targetColor/set",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -34,10 +34,10 @@
       "optimistic": true,
       "payload_off": "#000000",
       "rgb_command_template": "{{ \"#%02x%02x%02x\" | format(red, green, blue)}}",
-      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/1/0/set",
-      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/1/0",
+      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/2/targetColor/set",
+      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/2/currentColor",
       "rgb_value_template": "{{ value_json.value[1:3] | int(0, 16) }},{{ value_json.value[3:5] | int(0, 16) }},{{ value_json.value[5:7] | int(0, 16) }}",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/51/1/0",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/51/2/currentColor",
       "state_value_template": "{{ \"OFF\" if value_json.value == '#000000' else \"ON\" }}",
       "unique_id": "zwave2mqtt_NODE_NAME_rgb"
     }
@@ -51,9 +51,9 @@
         "name": "NODE_NAME"
       },
       "device_class": "power",
-      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/1/5",
+      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66817",
       "name": "NODE_NAME_electricity_a_meter",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/50/1/5",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66817",
       "unique_id": "zwave2mqtt_NODE_NAME_electricity_a_meter",
       "unit_of_measurement": "A",
       "value_template": "{{ value_json.value }}"
@@ -66,9 +66,9 @@
         "name": "NODE_NAME"
       },
       "device_class": "power",
-      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/1/0",
+      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/65537",
       "name": "NODE_NAME_electricity_kwh_meter",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/50/1/0",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/65537",
       "unique_id": "zwave2mqtt_NODE_NAME_kwh_meter",
       "unit_of_measurement": "kWh",
       "value_template": "{{ value_json.value }}"
@@ -81,9 +81,9 @@
         "name": "NODE_NAME"
       },
       "device_class": "power",
-      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/1/4",
+      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66561",
       "name": "NODE_NAME_electricity_v_meter",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/50/1/4",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66561",
       "unique_id": "zwave2mqtt_NODE_NAME_electricity_v_meter",
       "unit_of_measurement": "V",
       "value_template": "{{ value_json.value }}"
@@ -96,9 +96,9 @@
         "name": "NODE_NAME"
       },
       "device_class": "power",
-      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/1/2",
+      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66049",
       "name": "NODE_NAME_electricity_w_meter",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/50/1/2",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66049",
       "unique_id": "zwave2mqtt_NODE_NAME_electricity_w_meter",
       "unit_of_measurement": "W",
       "value_template": "{{ value_json.value }}"

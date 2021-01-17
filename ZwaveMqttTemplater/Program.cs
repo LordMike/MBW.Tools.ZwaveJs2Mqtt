@@ -39,7 +39,7 @@ namespace ZwaveMqttTemplater
 
             MqttStore store = new MqttStore(mqttClient);
 
-            //await store.Load("homeassistant/#", "zwave2mqtt/#", "zwavejs2mqtt/#");
+            await store.Load("homeassistant/#", "zwave2mqtt/#", "zwavejs2mqtt/#");
 
             try
             {
@@ -48,7 +48,7 @@ namespace ZwaveMqttTemplater
                 //DumpConfigs(nodes);
                 //DumpFirmwares(nodes);
 
-                //await HandleHassConfigs(store);
+                await HandleHassConfigs(store);
                 await HandleDeviceConfigs(store, nodes);
 
                 List<string> topics = store.GetTopicsToSet().ToList();
@@ -158,9 +158,13 @@ namespace ZwaveMqttTemplater
             HandleHassConfigs("AeotecSmartSwitch7", "powerplug_2");
             HandleHassConfigs("AeotecSmartDimmer6", "powerplug_3");
 
-            HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "door_1_1");
-            HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_20_2");
-            HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_21_2");
+            //HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "door_1_1");
+            //HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_20_2");
+            //HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_21_2");
+
+            HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_1_1");
+            HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "window_20_2");
+            HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "window_21_2");
             HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_30_1");
             HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_4_2");
 
