@@ -2,23 +2,24 @@
 {
     public class Z2MValue
     {
-        public string value_id { get; set; }
-        public int node_id { get; set; }
-        public int class_id { get; set; }
+        public string id { get; set; }
+        public int nodeId { get; set; }
+        public int commandClass { get; set; }
+        public string commandClassName { get; set; }
+        public string property { get; set; }
+        public string propertyName { get; set; }
         public string type { get; set; }
-        public string genre { get; set; }
-        public int instance { get; set; }
-        public int index { get; set; }
+        public bool readable { get; set; }
+        public bool writeable { get; set; }
+        public string description { get; set; }
         public string label { get; set; }
-        public string units { get; set; }
-        public string help { get; set; }
-        public bool read_only { get; set; }
-        public bool write_only { get; set; }
-        public int min { get; set; }
-        public int max { get; set; }
-        public bool is_polled { get; set; }
+        public int _default { get; set; }
+        public bool stateless { get; set; }
+        public uint min { get; set; }
+        public uint max { get; set; }
+        public bool list { get; set; }
+        public Z2MState[] states { get; set; }
         public object value { get; set; }
-        public string[] values { get; set; }
         public long lastUpdate { get; set; }
     }
 }

@@ -39,17 +39,17 @@ namespace ZwaveMqttTemplater
 
             MqttStore store = new MqttStore(mqttClient);
 
-            await store.Load("homeassistant/#", "zwave2mqtt/#", "zwavejs2mqtt/#");
+            //await store.Load("homeassistant/#", "zwave2mqtt/#", "zwavejs2mqtt/#");
 
             try
             {
-                //Z2MContainer nodes = await GetNodes(mqttClient);
+                Z2MContainer nodes = await GetNodes(mqttClient);
 
                 //DumpConfigs(nodes);
                 //DumpFirmwares(nodes);
 
-                await HandleHassConfigs(store);
-                //await HandleDeviceConfigs(mqttClient, nodes);
+                //await HandleHassConfigs(store);
+                await HandleDeviceConfigs(store, nodes);
 
                 List<string> topics = store.GetTopicsToSet().ToList();
 
@@ -82,18 +82,15 @@ namespace ZwaveMqttTemplater
 
             foreach (Z2MNode z2MNode in toList)
             {
-                Z2MValue fwConfig = z2MNode.values.Values.FirstOrDefault(s =>
-                    s.class_id == 134 && s.instance == 1 && s.index == 2);
-
-                Console.WriteLine($"{z2MNode.node_id}: {z2MNode.product} ({z2MNode.manufacturer})");
-                Console.WriteLine($"  Name: {z2MNode.name}   fw: {fwConfig?.value}");
+                Console.WriteLine($"{z2MNode.id}: {z2MNode.productLabel} {z2MNode.productDescription} ({z2MNode.manufacturer})");
+                Console.WriteLine($"  Name: {z2MNode.name}   fw: {z2MNode.firmwareVersion}");
 
                 foreach ((string key, Z2MValue value) in z2MNode.values)
                 {
-                    if (value.genre != "config")
+                    if (value.commandClass != 112)
                         continue;
 
-                    Console.WriteLine($"  {value.class_id}-{value.instance}-{value.index}: {value.value}");
+                    Console.WriteLine($"  {key}: {value.value}  ({value.label})");
                 }
 
                 Console.WriteLine();
@@ -102,77 +99,28 @@ namespace ZwaveMqttTemplater
 
         private static void DumpFirmwares(Z2MContainer nodes)
         {
-            IOrderedEnumerable<Z2MNode> toList = nodes.GetAll()
-                .OrderBy(s => s.manufacturerid)
-                .ThenBy(s => s.productid);
+            IOrderedEnumerable<Z2MNode> sorted = nodes.GetAll()
+                .OrderBy(s => s.manufacturerId)
+                .ThenBy(s => s.productId);
 
-            foreach (Z2MNode z2MNode in toList)
+            foreach (Z2MNode z2MNode in sorted)
             {
-                Z2MValue fwConfig = z2MNode.values.Values.FirstOrDefault(s =>
-                    s.class_id == 134 && s.instance == 1 && s.index == 2);
-
-                Console.WriteLine($"{z2MNode.node_id}: {z2MNode.product} ({z2MNode.manufacturer})  fw: {fwConfig?.value}");
+                Console.WriteLine($"{z2MNode.id}: {z2MNode.productLabel} {z2MNode.productDescription} ({z2MNode.manufacturer})  fw: {z2MNode.firmwareVersion}");
             }
         }
 
         private static async Task<Z2MContainer> GetNodes(IMqttClient mqttClient)
         {
-            ManualResetEvent stopEvent = new ManualResetEvent(false);
-            await using Timer timer = new Timer(state => stopEvent.Set());
-            timer.Change(10000, Timeout.Infinite);
+            var res = await Z2MHelpers.CallZwavejsApi<Z2MApiCallResult<List<Z2MNode>>>(mqttClient, "getNodes");
 
-            Z2MContainer container = null;
+            return new Z2MContainer(res.Result);
+        }
 
-            mqttClient.UseApplicationMessageReceivedHandler(eventArgs =>
-            {
-                if (eventArgs.ApplicationMessage.Payload == null)
-                    return;
+        private static async Task<JToken> GetAssociations(IMqttClient mqttClient, int node, int group)
+        {
+            var res = await Z2MHelpers.CallZwavejsApi<Z2MApiCallResult<JToken>>(mqttClient, "getAssociations", new object[] { node, group });
 
-                string str = eventArgs.ApplicationMessage.ConvertPayloadToString();
-
-                Z2MApiCallResult<List<Z2MNode>> nodes =
-                    JsonConvert.DeserializeObject<Z2MApiCallResult<List<Z2MNode>>>(str);
-
-                container = new Z2MContainer(nodes.Result);
-
-                foreach (Z2MNode z2MNode in nodes.Result)
-                {
-                    foreach ((string key, Z2MValue value) in z2MNode.values)
-                    {
-                        switch (value.type)
-                        {
-                            case "byte":
-                                value.value = Convert.ChangeType(value.value, typeof(byte));
-                                break;
-                            case "int":
-                                value.value = Convert.ChangeType(value.value, typeof(int));
-                                break;
-                        }
-                    }
-                }
-
-                stopEvent.Set();
-            });
-
-
-            await mqttClient.PublishAsync("zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes", new byte[0]); // clear old output
-          
-            await mqttClient.SubscribeAsync(
-                new TopicFilter { Topic = "zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes" }
-            );
-
-            await mqttClient.PublishAsync("zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes/set", new byte[0]); // request new doc
-
-            stopEvent.WaitOne();
-            timer.Change(Timeout.Infinite, Timeout.Infinite);
-
-            if (container == null)
-                throw new Exception("");
-
-            // clear this output
-            await mqttClient.PublishAsync("zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes", new byte[0]);
-
-            return container;
+            return res.Result;
         }
 
         private static async Task HandleHassConfigs(MqttStore store)
@@ -201,7 +149,7 @@ namespace ZwaveMqttTemplater
                         JToken discoveryDoc = discoveryDocItem.Value;
                         string discoveryTopic = $"{HassPrefix}/{type}/{nodeName}/{entityName}/config";
 
-                        store.Set(discoveryTopic, JsonConvert.SerializeObject(discoveryDoc), true)
+                        store.Set(discoveryTopic, JsonConvert.SerializeObject(discoveryDoc), true);
                     }
                 }
             }
@@ -238,16 +186,16 @@ namespace ZwaveMqttTemplater
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_31");
         }
 
-        private static async Task HandleDeviceConfigs(IMqttClient mqttClient, Z2MContainer z2MContainer)
+        private static async Task HandleDeviceConfigs(MqttStore store, Z2MContainer z2MContainer)
         {
             string[] configLines = await File.ReadAllLinesAsync("DeviceConfigsFile.txt");
 
             List<Z2MNode> nodes = new List<Z2MNode>();
 
             // Apply all configs in order to get final setup
-            // product:ZDB5100 Matrix	1-31	0
-            Regex lineParser = new Regex(@"^(?<type>\w+):(?<filter>[\w\s]+)\t(?<class>[0-9]+)-(?<instance>[0-9]+)-(?<index>[0-9]+)\t(?<value>[^#\n]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            Dictionary<ValueKey, object> values = new Dictionary<ValueKey, object>();
+            // product:ZDB5100 Matrix	1-31-2[0x33]	0
+            Regex lineParser = new Regex(@"^(?<type>\w+):(?<filter>[\w\s]+)\t(?<key>[0-9\-]+)\t(?<value>[^#\n]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            Dictionary<ValueKey, object> desiredValues = new Dictionary<ValueKey, object>();
 
             foreach (string configLine in configLines)
             {
@@ -276,112 +224,54 @@ namespace ZwaveMqttTemplater
                 }
 
                 // Set values
-                int @class = Convert.ToInt32(match.Groups["class"].Value);
-                int instance = Convert.ToInt32(match.Groups["instance"].Value);
-                int index = Convert.ToInt32(match.Groups["index"].Value);
+                string valueKey = match.Groups["key"].Value;
 
                 foreach (Z2MNode z2MNode in nodes)
                 {
-                    Z2MValue valueSpec = z2MContainer.GetCurrentValue(z2MNode.node_id, @class, instance, index);
-                    object newVal = ConvertZ2MValue(valueSpec, match.Groups["value"].Value);
+                    if (!z2MNode.values.TryGetValue(valueKey, out var value))
+                        continue;
 
-                    values[new ValueKey
-                    {
-                        NodeId = z2MNode.node_id,
-                        Class = @class,
-                        Instance = instance,
-                        Index = index
-                    }] = newVal;
+                    object newVal = ConvertZ2MValue(value, match.Groups["value"].Value);
+                    desiredValues[new ValueKey(z2MNode.id, valueKey)] = newVal;
                 }
             }
 
-            // Prepare messages, send MQTT
-            List<MqttApplicationMessage> messages = new List<MqttApplicationMessage>();
-
-            //zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/setValue/set
-            //{
-            //    "args": [node, class, instance, index, value]
-            //}
-
-            string topic = "zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/setValue/set";
-            foreach ((ValueKey key, object value) in values.OrderBy(s => s.Key.NodeId).ThenBy(s => s.Key.Instance).ThenBy(s => s.Key.Index))
+            foreach ((ValueKey key, object value) in desiredValues.OrderBy(s => s.Key.NodeId).ThenBy(s => s.Key.Key))
             {
                 // Get existing value
                 Z2MNode node = z2MContainer.GetNode(key.NodeId);
-                Z2MValue z2MValue = z2MContainer.GetCurrentValue(key.NodeId, key.Class, key.Instance, key.Index);
-                object currentVal = ConvertZ2MValue(z2MValue);
+                Z2MValue z2MValue = z2MContainer.GetValue(key.NodeId, key.Key);
+                object currentVal = z2MValue.value;
                 if (value.Equals(currentVal))
                 {
                     // Skip this
                     continue;
                 }
 
-                var setValueArgs = new
-                {
-                    args = new[]
-                    {
-                        key.NodeId,
-                        key.Class,
-                        key.Instance,
-                        key.Index,
-                        value
-                    }
-                };
+                // > zwavejs2mqtt/wallswitch_4/112/0/2
+                // DATA
 
-                byte[] setValueBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(setValueArgs));
-
-                messages.Add(new MqttApplicationMessage
-                {
-                    Topic = topic,
-                    Payload = setValueBytes
-                });
-
-                Console.WriteLine($"Sending ({node.product} \"{node.name}\" / {key}) {z2MValue.label}: {currentVal} => {value}");
-            }
-
-            if (messages.Any())
-            {
-                Console.WriteLine("Press any key to send messages");
-                Console.ReadLine();
-
-                await mqttClient.PublishAsync(messages);
+                string topic = $"zwavejs2mqtt/{node.name}/{key.Key.Replace('-', '/')}/set";
+                store.Set(topic, JsonConvert.SerializeObject(value));
             }
         }
 
-        private static object ConvertZ2MValue(Z2MValue spec, object val = null)
+        private static object ConvertZ2MValue(Z2MValue spec, string val = null)
         {
-            val ??= spec.value;
-
-            switch (spec.type)
+            Z2MState state;
+            if (spec.type == "number" &&
+                spec.list &&
+                (state = spec.states.FirstOrDefault(s => s.text == val)) != null)
             {
-                case "short":
-                    return Convert.ToInt16(val);
-                case "int":
-                    return Convert.ToInt32(val);
-                case "byte":
-                    return Convert.ToByte(val);
-                case "list":
-                    {
-                        if (val is string asString && int.TryParse(asString, out int asInt))
-                            return spec.values[asInt];
-                        return val;
-                    }
-                case "bool":
-                    {
-                        if (val is bool asBool)
-                            return asBool;
-                        if (val is string asString)
-                        {
-                            if (int.TryParse(asString, out int asInt))
-                                return asInt == 1;
-                            if (bool.TryParse(asString, out asBool))
-                                return asBool;
-                        }
-                        throw new Exception();
-                    }
-                default:
-                    throw new Exception();
+                return Convert.ChangeType(state.value, typeof(long));
             }
+
+            if (spec.type == "number")
+            {
+                return Convert.ToInt64(val);
+            }
+
+            throw new Exception();
         }
 
         private static JToken Transform(JToken token, Func<JToken, JToken> action)
