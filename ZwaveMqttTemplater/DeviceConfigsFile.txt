@@ -23,6 +23,32 @@ product:ZDB5100	112-0-2	2
 # On/off takes Ns
 product:ZDB5100	112-0-3	0
 
+# Button 1 controls light
+product:ZDB5100	112-0-1-1	1
+product:ZDB5100	112-0-1-2	0
+product:ZDB5100	112-0-1-4	0
+product:ZDB5100	112-0-1-8	0
+
+# Button 2 controls light
+name:wallswitch_1	112-0-1-1	0
+name:wallswitch_1	112-0-1-2	1
+name:wallswitch_22	112-0-1-1	0
+name:wallswitch_22	112-0-1-2	1
+
+# No button controls light
+name:wallswitch_30_2	112-0-1-1	0
+
+# Bathrooms, all buttons control light
+name:wallswitch_20	112-0-1-1	1
+name:wallswitch_20	112-0-1-2	1
+name:wallswitch_20	112-0-1-4	1
+name:wallswitch_20	112-0-1-8	1
+
+name:wallswitch_21	112-0-1-1	1
+name:wallswitch_21	112-0-1-2	1
+name:wallswitch_21	112-0-1-4	1
+name:wallswitch_21	112-0-1-8	1
+
 # Enable remote control LED
 product:ZDB5100	112-0-20	0
 product:ZDB5100	112-0-28	0

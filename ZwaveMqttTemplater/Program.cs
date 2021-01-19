@@ -50,7 +50,7 @@ namespace ZwaveMqttTemplater
 
                 //await HandleAssociationsConfig(mqttClient, store, nodes);
                 await HandleHassConfigs(store);
-                //await HandleDeviceConfigs(store, nodes);
+                await HandleDeviceConfigs(store, nodes);
 
                 List<string> topics = store.GetTopicsToSet().ToList();
 
@@ -172,8 +172,8 @@ namespace ZwaveMqttTemplater
                             }
                         }));
 
-                    if (toAdd.Any() || toRemove.Any())
-                        return;
+                    //if (toAdd.Any() || toRemove.Any())
+                    //    return;
                 }
             }
         }
@@ -447,7 +447,7 @@ namespace ZwaveMqttTemplater
                 }
                 else
                 {
-                    Z2MNode target = nodes.GetByName(node).FirstOrDefault();
+                    Z2MNode target = nodes.GetByName(node).Single();
                     if (target == null)
                         throw new Exception();
 
