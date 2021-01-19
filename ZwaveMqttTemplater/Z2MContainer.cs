@@ -19,10 +19,15 @@ namespace ZwaveMqttTemplater
             return _nodes.Where(s => !s.failed);
         }
 
-        public IEnumerable<Z2MNode> GetByName(string filter)
+        public IEnumerable<Z2MNode> GetByNameFilter(string filter)
         {
             // TODO: wildcards
             return GetBaseQuery().Where(s => s.name?.Contains(filter) ?? false);
+        }
+
+        public IEnumerable<Z2MNode> GetByName(string name)
+        {
+            return GetBaseQuery().Where(s => s.name?.Equals(name,StringComparison.OrdinalIgnoreCase) ?? false);
         }
 
         public IEnumerable<Z2MNode> GetByProduct(string filter)

@@ -13,12 +13,14 @@ namespace ZwaveMqttTemplater
         private readonly IMqttClient _client;
         private readonly Dictionary<string, byte[]> _existingTopics;
         private readonly Dictionary<string, (byte[] payload, bool retain)> _desiredTopics;
+        private readonly List<(string topic, byte[] payload)> _blindPublish;
 
         public MqttStore(IMqttClient client)
         {
             _client = client;
             _existingTopics = new Dictionary<string, byte[]>(StringComparer.Ordinal);
             _desiredTopics = new Dictionary<string, (byte[] payload, bool retain)>(StringComparer.Ordinal);
+            _blindPublish = new List<(string topic, byte[] payload)>();
         }
 
         public async Task Load(params string[] topics)
@@ -58,6 +60,11 @@ namespace ZwaveMqttTemplater
             _desiredTopics[topic] = (payload, retain);
         }
 
+        public void SetBlindly(string topic, byte[] payload)
+        {
+            _blindPublish.Add((topic, payload));
+        }
+
         public bool TryGet(string topic, out byte[] payload)
         {
             if (_desiredTopics.TryGetValue(topic, out (byte[] payload, bool retain) item))
@@ -71,24 +78,44 @@ namespace ZwaveMqttTemplater
 
         public IEnumerable<string> GetTopicsToSet()
         {
+            return GetTopicsToSet(true);
+        }
+
+        private IEnumerable<string> GetTopicsToSet(bool includeBlind)
+        {
             foreach ((string topic, (byte[] payload, bool retain) value) in _desiredTopics)
             {
                 if (!_existingTopics.TryGetValue(topic, out byte[] existing) || !existing.SequenceEqual(value.payload))
+                    yield return topic;
+            }
+
+            if (includeBlind)
+            {
+                foreach ((string topic, byte[] _) in _blindPublish)
                     yield return topic;
             }
         }
 
         public async Task FlushTopicsToSet()
         {
-            foreach (string topic in GetTopicsToSet())
+            foreach (string topic in GetTopicsToSet(false))
             {
-                var (payload, retain) = _desiredTopics[topic];
+                (byte[] payload, bool retain) = _desiredTopics[topic];
 
                 await _client.PublishAsync(new MqttApplicationMessage
                 {
                     Topic = topic,
                     Payload = payload,
                     Retain = retain
+                });
+            }
+
+            foreach ((string topic, byte[] payload) in _blindPublish)
+            {
+                await _client.PublishAsync(new MqttApplicationMessage
+                {
+                    Topic = topic,
+                    Payload = payload
                 });
             }
         }

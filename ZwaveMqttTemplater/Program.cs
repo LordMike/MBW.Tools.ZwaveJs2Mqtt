@@ -48,8 +48,9 @@ namespace ZwaveMqttTemplater
                 //DumpConfigs(nodes);
                 //DumpFirmwares(nodes);
 
+                //await HandleAssociationsConfig(mqttClient, store, nodes);
                 await HandleHassConfigs(store);
-                await HandleDeviceConfigs(store, nodes);
+                //await HandleDeviceConfigs(store, nodes);
 
                 List<string> topics = store.GetTopicsToSet().ToList();
 
@@ -111,16 +112,70 @@ namespace ZwaveMqttTemplater
 
         private static async Task<Z2MContainer> GetNodes(IMqttClient mqttClient)
         {
-            var res = await Z2MHelpers.CallZwavejsApi<Z2MApiCallResult<List<Z2MNode>>>(mqttClient, "getNodes");
+            Z2MApiCallResult<List<Z2MNode>> res = await Z2MHelpers.CallZwavejsApi<List<Z2MNode>>(mqttClient, "getNodes");
 
             return new Z2MContainer(res.Result);
         }
 
-        private static async Task<JToken> GetAssociations(IMqttClient mqttClient, int node, int group)
+        private static async Task<Z2mAssociation[]> GetAssociations(IMqttClient mqttClient, int node, int group)
         {
-            var res = await Z2MHelpers.CallZwavejsApi<Z2MApiCallResult<JToken>>(mqttClient, "getAssociations", new object[] { node, group });
+            Z2MApiCallResult<Z2mAssociation[]> res = await Z2MHelpers.CallZwavejsApi<Z2mAssociation[]>(mqttClient, "getAssociations", new object[] { node, group });
 
             return res.Result;
+        }
+
+        private static async Task HandleAssociationsConfig(IMqttClient client, MqttStore store, Z2MContainer nodes)
+        {
+            DesiredAssociationsContainer desired = JsonConvert.DeserializeObject<DesiredAssociationsContainer>(File.ReadAllText("AssociationsConfig.json"));
+
+            foreach ((string key, DesiredAssociations value) in desired.Nodes)
+            {
+                Z2MNode node = nodes.GetByName(key).Single();
+
+                foreach (Z2MGroup z2MGroup in node.groups)
+                {
+                    int groupId = z2MGroup.value;
+                    List<Z2mAssociation> desiredLinks = value.GetLinks(nodes, groupId).ToList();
+
+                    Z2mAssociation[] existing = await GetAssociations(client, node.id, groupId);
+
+                    List<Z2mAssociation> toRemove = existing.Where(s => desiredLinks.All(x => s != x)).ToList();
+                    List<Z2mAssociation> toAdd = desiredLinks.Where(s => existing.All(x => s != x)).ToList();
+
+                    foreach (Z2mAssociation item in toRemove)
+                    {
+                        Z2MNode otherNode = nodes.GetNode(item.NodeId);
+                        Console.WriteLine($"Node {node.id} {node.name}, remove group {groupId} ({z2MGroup.text}) => {item.NodeId}.{item.Endpoint} ({otherNode.name})");
+                    }
+
+                    if (toRemove.Any())
+                        store.SetBlindly("zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/removeAssociations/set", JsonConvert.SerializeObject(new
+                        {
+                            args = new object[]
+                            {
+                            node.id, groupId, toRemove
+                            }
+                        }));
+
+                    foreach (Z2mAssociation item in toAdd)
+                    {
+                        Z2MNode otherNode = nodes.GetNode(item.NodeId);
+                        Console.WriteLine($"Node {node.id} {node.name}, add group {groupId} ({z2MGroup.text}) => {item.NodeId}.{item.Endpoint} ({otherNode.name})");
+                    }
+
+                    if (toAdd.Any())
+                        store.SetBlindly("zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/addAssociations/set", JsonConvert.SerializeObject(new
+                        {
+                            args = new object[]
+                            {
+                            node.id, groupId, toAdd
+                            }
+                        }));
+
+                    if (toAdd.Any() || toRemove.Any())
+                        return;
+                }
+            }
         }
 
         private static async Task HandleHassConfigs(MqttStore store)
@@ -212,7 +267,7 @@ namespace ZwaveMqttTemplater
                 switch (match.Groups["type"].Value)
                 {
                     case "name":
-                        nodes.AddRange(z2MContainer.GetByName(match.Groups["filter"].Value));
+                        nodes.AddRange(z2MContainer.GetByNameFilter(match.Groups["filter"].Value));
                         break;
                     case "product":
                         nodes.AddRange(z2MContainer.GetByProduct(match.Groups["filter"].Value));
@@ -232,7 +287,7 @@ namespace ZwaveMqttTemplater
 
                 foreach (Z2MNode z2MNode in nodes)
                 {
-                    if (!z2MNode.values.TryGetValue(valueKey, out var value))
+                    if (!z2MNode.values.TryGetValue(valueKey, out Z2MValue value))
                         continue;
 
                     object newVal = ConvertZ2MValue(value, match.Groups["value"].Value);
@@ -315,6 +370,90 @@ namespace ZwaveMqttTemplater
             using StreamReader sr = new StreamReader(strm, Encoding.UTF8);
 
             return JObject.Parse(sr.ReadToEnd());
+        }
+    }
+
+    class Z2mAssociation : IEquatable<Z2mAssociation>
+    {
+        [JsonProperty("nodeId")]
+        public int NodeId { get; set; }
+
+        [JsonProperty("endpoint")]
+        public int Endpoint { get; set; }
+
+        public Z2mAssociation(int nodeId, int endpoint)
+        {
+            NodeId = nodeId;
+            Endpoint = endpoint;
+        }
+
+        public bool Equals(Z2mAssociation other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return NodeId == other.NodeId && Endpoint == other.Endpoint;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Z2mAssociation)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(NodeId, Endpoint);
+        }
+
+        public static bool operator ==(Z2mAssociation left, Z2mAssociation right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Z2mAssociation left, Z2mAssociation right)
+        {
+            return !Equals(left, right);
+        }
+    }
+
+    class DesiredAssociationsContainer
+    {
+        public Dictionary<string, DesiredAssociations> Nodes { get; set; }
+    }
+
+    class DesiredAssociations
+    {
+        /// <summary>
+        /// Group => Node.Endpoint
+        /// </summary>
+        public Dictionary<int, string[]> Links { get; set; }
+
+        public IEnumerable<Z2mAssociation> GetLinks(Z2MContainer nodes, int groupId)
+        {
+            if (Links == null || !Links.TryGetValue(groupId, out string[] links))
+                yield break;
+
+            foreach (string link in links)
+            {
+                string[] split = link.Split('.');
+                string node = split[0];
+                int endpoint = split.Length == 2 ? Convert.ToInt32(split[1]) : 0;
+
+                if (int.TryParse(node, out int nodeId))
+                {
+                    yield return new Z2mAssociation(nodeId, Convert.ToInt32(split[1]));
+                }
+                else
+                {
+                    Z2MNode target = nodes.GetByName(node).FirstOrDefault();
+                    if (target == null)
+                        throw new Exception();
+
+                    yield return new Z2mAssociation(target.id, endpoint);
+                }
+            }
         }
     }
 }
