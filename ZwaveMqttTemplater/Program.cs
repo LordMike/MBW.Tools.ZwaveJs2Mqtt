@@ -50,7 +50,7 @@ namespace ZwaveMqttTemplater
 
                 //await HandleAssociationsConfig(mqttClient, store, nodes);
                 await HandleHassConfigs(store);
-                await HandleDeviceConfigs(store, nodes);
+                //await HandleDeviceConfigs(store, nodes);
 
                 List<string> topics = store.GetTopicsToSet().ToList();
 
@@ -243,6 +243,8 @@ namespace ZwaveMqttTemplater
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_4");
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_5");
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_31");
+            
+            HandleHassConfigs("NorthQGas9121", "meter_gas");
         }
 
         private static async Task HandleDeviceConfigs(MqttStore store, Z2MContainer z2MContainer)
