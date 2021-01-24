@@ -1,11 +1,11 @@
 ﻿{
   "light": {
     "dimmer": {
-      "brightness_command_topic": "zwave2mqtt/NODE_NAME/38/6/0/set",
-      "brightness_scale": 255,
-      "brightness_state_topic": "zwave2mqtt/NODE_NAME/38/6/0",
-      "brightness_value_template": "{{ value_json.value * 2.55 }}",
-      "command_topic": "zwave2mqtt/NODE_NAME/37/6/0/set",
+      "brightness_command_topic": "zwavejs2mqtt/NODE_NAME/38/5/targetValue/set",
+      "brightness_scale": 99,
+      "brightness_state_topic": "zwavejs2mqtt/NODE_NAME/38/5/currentValue",
+      "brightness_value_template": "{{ value_json.value }}",
+      "command_topic": "zwavejs2mqtt/NODE_NAME/37/5/targetValue/set",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -16,13 +16,14 @@
       },
       "name": "NODE_NAME_dimmer",
       "on_command_type": "brightness",
-      "payload_on": "ON",
-      "state_topic": "zwave2mqtt/NODE_NAME/38/6/0",
-      "state_value_template": "{{ \"OFF\" if value_json.value == 0 else \"ON\" }}",
+      "payload_on": "true",
+      "payload_off": "false",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/38/5/currentValue",
+      "state_value_template": "{{ 'false' if value_json.value == 0 else 'true' }}",
       "unique_id": "zwave2mqtt_NODE_NAME_dimmer"
     },
     "rgb_1": {
-      "command_topic": "zwave2mqtt/NODE_NAME/51/2/0/set",
+      "command_topic": "zwavejs2mqtt/NODE_NAME/51/1/hexColor/set",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -32,18 +33,19 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_rgb_1",
-      "optimistic": true,
+      "on_command_type": "brightness",
+      "payload_on": "#ffffff",
       "payload_off": "#000000",
-      "rgb_command_template": "{{ \"#%02x%02x%02x\" | format(red, green, blue)}}",
-      "rgb_command_topic": "zwave2mqtt/NODE_NAME/51/2/0/set",
-      "rgb_state_topic": "zwave2mqtt/NODE_NAME/51/2/0",
-      "rgb_value_template": "{{ value_json.value[1:3] | int(0, 16) }},{{ value_json.value[3:5] | int(0, 16) }},{{ value_json.value[5:7] | int(0, 16) }}",
-      "state_topic": "zwave2mqtt/NODE_NAME/51/2/0",
-      "state_value_template": "{{ \"OFF\" if value_json.value == '#000000' else \"ON\" }}",
+      "rgb_command_template": "{{ \"%02x%02x%02x\" | format(red, green, blue)}}",
+      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/1/hexColor/set",
+      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/1/hexColor",
+      "rgb_value_template": "{{ value_json.value[0:2] | int(0, 16) }},{{ value_json.value[2:4] | int(0, 16) }},{{ value_json.value[4:6] | int(0, 16) }}",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/51/1/hexColor",
+      "state_value_template": "{{ '#000000' if value_json.value == '000000' else '#ffffff' }}",
       "unique_id": "zwave2mqtt_NODE_NAME_rgb_1"
     },
     "rgb_2": {
-      "command_topic": "zwave2mqtt/NODE_NAME/51/3/0/set",
+      "command_topic": "zwavejs2mqtt/NODE_NAME/51/2/hexColor/set",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -53,18 +55,19 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_rgb_2",
-      "optimistic": true,
+      "on_command_type": "brightness",
+      "payload_on": "#ffffff",
       "payload_off": "#000000",
       "rgb_command_template": "{{ \"#%02x%02x%02x\" | format(red, green, blue)}}",
-      "rgb_command_topic": "zwave2mqtt/NODE_NAME/51/3/0/set",
-      "rgb_state_topic": "zwave2mqtt/NODE_NAME/51/3/0",
-      "rgb_value_template": "{{ value_json.value[1:3] | int(0, 16) }},{{ value_json.value[3:5] | int(0, 16) }},{{ value_json.value[5:7] | int(0, 16) }}",
-      "state_topic": "zwave2mqtt/NODE_NAME/51/3/0",
-      "state_value_template": "{{ \"OFF\" if value_json.value == '#000000' else \"ON\" }}",
+      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/2/hexColor/set",
+      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/2/hexColor",
+      "rgb_value_template": "{{ value_json.value[0:2] | int(0, 16) }},{{ value_json.value[2:4] | int(0, 16) }},{{ value_json.value[4:6] | int(0, 16) }}",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/51/2/hexColor",
+      "state_value_template": "{{ '#000000' if value_json.value == '000000' else '#ffffff' }}",
       "unique_id": "zwave2mqtt_NODE_NAME_rgb_2"
     },
     "rgb_3": {
-      "command_topic": "zwave2mqtt/NODE_NAME/51/4/0/set",
+      "command_topic": "zwavejs2mqtt/NODE_NAME/51/3/hexColor/set",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -74,18 +77,19 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_rgb_3",
-      "optimistic": true,
+      "on_command_type": "brightness",
+      "payload_on": "#ffffff",
       "payload_off": "#000000",
       "rgb_command_template": "{{ \"#%02x%02x%02x\" | format(red, green, blue)}}",
-      "rgb_command_topic": "zwave2mqtt/NODE_NAME/51/4/0/set",
-      "rgb_state_topic": "zwave2mqtt/NODE_NAME/51/4/0",
-      "rgb_value_template": "{{ value_json.value[1:3] | int(0, 16) }},{{ value_json.value[3:5] | int(0, 16) }},{{ value_json.value[5:7] | int(0, 16) }}",
-      "state_topic": "zwave2mqtt/NODE_NAME/51/4/0",
-      "state_value_template": "{{ \"OFF\" if value_json.value == '#000000' else \"ON\" }}",
+      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/3/hexColor/set",
+      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/3/hexColor",
+      "rgb_value_template": "{{ value_json.value[0:2] | int(0, 16) }},{{ value_json.value[2:4] | int(0, 16) }},{{ value_json.value[4:6] | int(0, 16) }}",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/51/3/hexColor",
+      "state_value_template": "{{ '#000000' if value_json.value == '000000' else '#ffffff' }}",
       "unique_id": "zwave2mqtt_NODE_NAME_rgb_3"
     },
     "rgb_4": {
-      "command_topic": "zwave2mqtt/NODE_NAME/51/5/0/set",
+      "command_topic": "zwavejs2mqtt/NODE_NAME/51/4/hexColor/set",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -95,14 +99,15 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_rgb_4",
-      "optimistic": true,
+      "on_command_type": "brightness",
+      "payload_on": "#ffffff",
       "payload_off": "#000000",
       "rgb_command_template": "{{ \"#%02x%02x%02x\" | format(red, green, blue)}}",
-      "rgb_command_topic": "zwave2mqtt/NODE_NAME/51/5/0/set",
-      "rgb_state_topic": "zwave2mqtt/NODE_NAME/51/5/0",
-      "rgb_value_template": "{{ value_json.value[1:3] | int(0, 16) }},{{ value_json.value[3:5] | int(0, 16) }},{{ value_json.value[5:7] | int(0, 16) }}",
-      "state_topic": "zwave2mqtt/NODE_NAME/51/5/0",
-      "state_value_template": "{{ \"OFF\" if value_json.value == '#000000' else \"ON\" }}",
+      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/4/hexColor/set",
+      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/4/hexColor",
+      "rgb_value_template": "{{ value_json.value[0:2] | int(0, 16) }},{{ value_json.value[2:4] | int(0, 16) }},{{ value_json.value[4:6] | int(0, 16) }}",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/51/4/hexColor",
+      "state_value_template": "{{ '#000000' if value_json.value == '000000' else '#ffffff' }}",
       "unique_id": "zwave2mqtt_NODE_NAME_rgb_4"
     }
   },
@@ -115,9 +120,9 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_button_1",
-      "state_topic": "zwave2mqtt/NODE_NAME/91/1/1",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/91/0/scene/001",
       "unique_id": "zwave2mqtt_NODE_NAME_button_1",
-      "value_template": "{{ value_json.value }}"
+      "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times'][value_json.value] }}"
     },
     "button_2": {
       "device": {
@@ -127,9 +132,9 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_button_2",
-      "state_topic": "zwave2mqtt/NODE_NAME/91/1/2",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/91/0/scene/002",
       "unique_id": "zwave2mqtt_NODE_NAME_button_2",
-      "value_template": "{{ value_json.value }}"
+      "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times'][value_json.value] }}"
     },
     "button_3": {
       "device": {
@@ -139,9 +144,9 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_button_3",
-      "state_topic": "zwave2mqtt/NODE_NAME/91/1/3",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/91/0/scene/003",
       "unique_id": "zwave2mqtt_NODE_NAME_button_3",
-      "value_template": "{{ value_json.value }}"
+      "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times'][value_json.value] }}"
     },
     "button_4": {
       "device": {
@@ -151,9 +156,9 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_button_4",
-      "state_topic": "zwave2mqtt/NODE_NAME/91/1/4",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/91/0/scene/004",
       "unique_id": "zwave2mqtt_NODE_NAME_button_4",
-      "value_template": "{{ value_json.value }}"
+      "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times'][value_json.value] }}"
     }
   }
 }

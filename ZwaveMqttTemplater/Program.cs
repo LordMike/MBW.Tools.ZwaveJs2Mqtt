@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,13 +43,14 @@ namespace ZwaveMqttTemplater
 
             try
             {
-                //Z2MContainer nodes = await GetNodes(mqttClient);
+                Z2MContainer nodes = await GetNodes(mqttClient);
 
                 //DumpConfigs(nodes);
                 //DumpFirmwares(nodes);
 
+                //await HandleAssociationsConfig(mqttClient, store, nodes);
                 await HandleHassConfigs(store);
-                //await HandleDeviceConfigs(mqttClient, nodes);
+                //await HandleDeviceConfigs(store, nodes);
 
                 List<string> topics = store.GetTopicsToSet().ToList();
 
@@ -82,18 +83,15 @@ namespace ZwaveMqttTemplater
 
             foreach (Z2MNode z2MNode in toList)
             {
-                Z2MValue fwConfig = z2MNode.values.Values.FirstOrDefault(s =>
-                    s.class_id == 134 && s.instance == 1 && s.index == 2);
-
-                Console.WriteLine($"{z2MNode.node_id}: {z2MNode.product} ({z2MNode.manufacturer})");
-                Console.WriteLine($"  Name: {z2MNode.name}   fw: {fwConfig?.value}");
+                Console.WriteLine($"{z2MNode.id}: {z2MNode.productLabel} {z2MNode.productDescription} ({z2MNode.manufacturer})");
+                Console.WriteLine($"  Name: {z2MNode.name}   fw: {z2MNode.firmwareVersion}");
 
                 foreach ((string key, Z2MValue value) in z2MNode.values)
                 {
-                    if (value.genre != "config")
+                    if (value.commandClass != 112)
                         continue;
 
-                    Console.WriteLine($"  {value.class_id}-{value.instance}-{value.index}: {value.value}");
+                    Console.WriteLine($"  {key}: {value.value}  ({value.label})");
                 }
 
                 Console.WriteLine();
@@ -102,76 +100,82 @@ namespace ZwaveMqttTemplater
 
         private static void DumpFirmwares(Z2MContainer nodes)
         {
-            IOrderedEnumerable<Z2MNode> toList = nodes.GetAll()
-                .OrderBy(s => s.manufacturerid)
-                .ThenBy(s => s.productid);
+            IOrderedEnumerable<Z2MNode> sorted = nodes.GetAll()
+                .OrderBy(s => s.manufacturerId)
+                .ThenBy(s => s.productId);
 
-            foreach (Z2MNode z2MNode in toList)
+            foreach (Z2MNode z2MNode in sorted)
             {
-                Z2MValue fwConfig = z2MNode.values.Values.FirstOrDefault(s =>
-                    s.class_id == 134 && s.instance == 1 && s.index == 2);
-
-                Console.WriteLine($"{z2MNode.node_id}: {z2MNode.product} ({z2MNode.manufacturer})  fw: {fwConfig?.value}");
+                Console.WriteLine($"{z2MNode.id}: {z2MNode.productLabel} {z2MNode.productDescription} ({z2MNode.manufacturer})  fw: {z2MNode.firmwareVersion}");
             }
         }
 
         private static async Task<Z2MContainer> GetNodes(IMqttClient mqttClient)
         {
-            ManualResetEvent stopEvent = new ManualResetEvent(false);
-            await using Timer timer = new Timer(state => stopEvent.Set());
-            timer.Change(10000, Timeout.Infinite);
+            Z2MApiCallResult<List<Z2MNode>> res = await Z2MHelpers.CallZwavejsApi<List<Z2MNode>>(mqttClient, "getNodes");
 
-            Z2MContainer container = null;
+            return new Z2MContainer(res.Result);
+        }
 
-            mqttClient.UseApplicationMessageReceivedHandler(eventArgs =>
+        private static async Task<Z2mAssociation[]> GetAssociations(IMqttClient mqttClient, int node, int group)
+        {
+            Z2MApiCallResult<Z2mAssociation[]> res = await Z2MHelpers.CallZwavejsApi<Z2mAssociation[]>(mqttClient, "getAssociations", new object[] { node, group });
+
+            return res.Result;
+        }
+
+        private static async Task HandleAssociationsConfig(IMqttClient client, MqttStore store, Z2MContainer nodes)
+        {
+            DesiredAssociationsContainer desired = JsonConvert.DeserializeObject<DesiredAssociationsContainer>(File.ReadAllText("AssociationsConfig.json"));
+
+            foreach ((string key, DesiredAssociations value) in desired.Nodes)
             {
-                if (eventArgs.ApplicationMessage.Payload == null)
-                    return;
+                Z2MNode node = nodes.GetByName(key).Single();
 
-                string str = eventArgs.ApplicationMessage.ConvertPayloadToString();
-
-                Z2MApiCallResult<List<Z2MNode>> nodes =
-                    JsonConvert.DeserializeObject<Z2MApiCallResult<List<Z2MNode>>>(str);
-
-                container = new Z2MContainer(nodes.Result);
-
-                foreach (Z2MNode z2MNode in nodes.Result)
+                foreach (Z2MGroup z2MGroup in node.groups)
                 {
-                    foreach ((string key, Z2MValue value) in z2MNode.values)
+                    int groupId = z2MGroup.value;
+                    List<Z2mAssociation> desiredLinks = value.GetLinks(nodes, groupId).ToList();
+
+                    Z2mAssociation[] existing = await GetAssociations(client, node.id, groupId);
+
+                    List<Z2mAssociation> toRemove = existing.Where(s => desiredLinks.All(x => s != x)).ToList();
+                    List<Z2mAssociation> toAdd = desiredLinks.Where(s => existing.All(x => s != x)).ToList();
+
+                    foreach (Z2mAssociation item in toRemove)
                     {
-                        switch (value.type)
-                        {
-                            case "byte":
-                                value.value = Convert.ChangeType(value.value, typeof(byte));
-                                break;
-                            case "int":
-                                value.value = Convert.ChangeType(value.value, typeof(int));
-                                break;
-                        }
+                        Z2MNode otherNode = nodes.GetNode(item.NodeId);
+                        Console.WriteLine($"Node {node.id} {node.name}, remove group {groupId} ({z2MGroup.text}) => {item.NodeId}.{item.Endpoint} ({otherNode.name})");
                     }
+
+                    if (toRemove.Any())
+                        store.SetBlindly("zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/removeAssociations/set", JsonConvert.SerializeObject(new
+                        {
+                            args = new object[]
+                            {
+                            node.id, groupId, toRemove
+                            }
+                        }));
+
+                    foreach (Z2mAssociation item in toAdd)
+                    {
+                        Z2MNode otherNode = nodes.GetNode(item.NodeId);
+                        Console.WriteLine($"Node {node.id} {node.name}, add group {groupId} ({z2MGroup.text}) => {item.NodeId}.{item.Endpoint} ({otherNode.name})");
+                    }
+
+                    if (toAdd.Any())
+                        store.SetBlindly("zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/addAssociations/set", JsonConvert.SerializeObject(new
+                        {
+                            args = new object[]
+                            {
+                            node.id, groupId, toAdd
+                            }
+                        }));
+
+                    //if (toAdd.Any() || toRemove.Any())
+                    //    return;
                 }
-
-                stopEvent.Set();
-            });
-
-
-            await mqttClient.PublishAsync("zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes", new byte[0]); // clear old output
-            await mqttClient.PublishAsync("zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes/set", new byte[0]); // request new doc
-
-            await mqttClient.SubscribeAsync(
-                new TopicFilter { Topic = "zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes" }
-            );
-
-            stopEvent.WaitOne();
-            timer.Change(Timeout.Infinite, Timeout.Infinite);
-
-            if (container == null)
-                throw new Exception();
-
-            // clear this output
-            await mqttClient.PublishAsync("zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/getNodes", new byte[0]);
-
-            return container;
+            }
         }
 
         private static async Task HandleHassConfigs(MqttStore store)
@@ -209,9 +213,13 @@ namespace ZwaveMqttTemplater
             HandleHassConfigs("AeotecSmartSwitch7", "powerplug_2");
             HandleHassConfigs("AeotecSmartDimmer6", "powerplug_3");
 
-            HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "door_1_1");
-            HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_20_2");
-            HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_21_2");
+            //HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "door_1_1");
+            //HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_20_2");
+            //HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_21_2");
+
+            HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_1_1");
+            HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "window_20_2");
+            HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "window_21_2");
             HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_30_1");
             HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_4_2");
 
@@ -235,6 +243,8 @@ namespace ZwaveMqttTemplater
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_4");
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_5");
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_31");
+            
+            HandleHassConfigs("NorthQGas9121", "meter_gas");
         }
 
         private static async Task HandleDeviceConfigs(MqttStore store, Z2MContainer z2MContainer)
@@ -244,9 +254,9 @@ namespace ZwaveMqttTemplater
             List<Z2MNode> nodes = new List<Z2MNode>();
 
             // Apply all configs in order to get final setup
-            // product:ZDB5100 Matrix	1-31	0
-            Regex lineParser = new Regex(@"^(?<type>\w+):(?<filter>[\w\s]+)\t(?<class>[0-9]+)-(?<instance>[0-9]+)-(?<index>[0-9]+)\t(?<value>[^#\n]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            Dictionary<ValueKey, object> values = new Dictionary<ValueKey, object>();
+            // product:ZDB5100 Matrix	1-31-2[0x33]	0
+            Regex lineParser = new Regex(@"^(?<type>\w+):(?<filter>[\w\s]+)\t(?<key>[0-9\-]+)\t(?<value>[^#\n]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            Dictionary<ValueKey, object> desiredValues = new Dictionary<ValueKey, object>();
 
             foreach (string configLine in configLines)
             {
@@ -259,7 +269,7 @@ namespace ZwaveMqttTemplater
                 switch (match.Groups["type"].Value)
                 {
                     case "name":
-                        nodes.AddRange(z2MContainer.GetByName(match.Groups["filter"].Value));
+                        nodes.AddRange(z2MContainer.GetByNameFilter(match.Groups["filter"].Value));
                         break;
                     case "product":
                         nodes.AddRange(z2MContainer.GetByProduct(match.Groups["filter"].Value));
@@ -275,96 +285,54 @@ namespace ZwaveMqttTemplater
                 }
 
                 // Set values
-                int @class = Convert.ToInt32(match.Groups["class"].Value);
-                int instance = Convert.ToInt32(match.Groups["instance"].Value);
-                int index = Convert.ToInt32(match.Groups["index"].Value);
+                string valueKey = match.Groups["key"].Value;
 
-                foreach (Z2MNode z2MNode in nodes.Where(s => s.node_id == 9))
+                foreach (Z2MNode z2MNode in nodes)
                 {
-                    Z2MValue valueSpec = z2MContainer.GetCurrentValue(z2MNode.node_id, @class, instance, index);
-                    object newVal = ConvertZ2MValue(valueSpec, match.Groups["value"].Value);
+                    if (!z2MNode.values.TryGetValue(valueKey, out Z2MValue value))
+                        continue;
 
-                    values[new ValueKey
-                    {
-                        NodeId = z2MNode.node_id,
-                        Class = @class,
-                        Instance = instance,
-                        Index = index
-                    }] = newVal;
+                    object newVal = ConvertZ2MValue(value, match.Groups["value"].Value);
+                    desiredValues[new ValueKey(z2MNode.id, valueKey)] = newVal;
                 }
             }
 
-            // Prepare messages, send MQTT
-            List<MqttApplicationMessage> messages = new List<MqttApplicationMessage>();
-
-            //zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/setValue/set
-            //{
-            //    "args": [node, class, instance, index, value]
-            //}
-
-            string topic = "zwave2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/setValue/set";
-            foreach ((ValueKey key, object value) in values.OrderBy(s => s.Key.NodeId).ThenBy(s => s.Key.Instance).ThenBy(s => s.Key.Index))
+            foreach ((ValueKey key, object value) in desiredValues.OrderBy(s => s.Key.NodeId).ThenBy(s => s.Key.Key))
             {
                 // Get existing value
                 Z2MNode node = z2MContainer.GetNode(key.NodeId);
-                Z2MValue z2MValue = z2MContainer.GetCurrentValue(key.NodeId, key.Class, key.Instance, key.Index);
-                object currentVal = ConvertZ2MValue(z2MValue);
+                Z2MValue z2MValue = z2MContainer.GetValue(key.NodeId, key.Key);
+                object currentVal = z2MValue.value;
                 if (value.Equals(currentVal))
                 {
                     // Skip this
                     continue;
                 }
 
-                var setValueArgs = new
-                {
-                    args = new[]
-                    {
-                        key.NodeId,
-                        key.Class,
-                        key.Instance,
-                        key.Index,
-                        value
-                    }
-                };
+                // > zwavejs2mqtt/wallswitch_4/112/0/2
+                // DATA
 
-                store.SetBlindly(topic, JsonConvert.SerializeObject(setValueArgs));
+                string topic = $"zwavejs2mqtt/{node.name}/{key.Key.Replace('-', '/')}/set";
+                store.Set(topic, JsonConvert.SerializeObject(value));
             }
         }
 
-        private static object ConvertZ2MValue(Z2MValue spec, object val = null)
+        private static object ConvertZ2MValue(Z2MValue spec, string val = null)
         {
-            val ??= spec.value;
-
-            switch (spec.type)
+            Z2MState state;
+            if (spec.type == "number" &&
+                spec.list &&
+                (state = spec.states.FirstOrDefault(s => s.text == val)) != null)
             {
-                case "short":
-                    return Convert.ToInt16(val);
-                case "int":
-                    return Convert.ToInt32(val);
-                case "byte":
-                    return Convert.ToByte(val);
-                case "list":
-                    {
-                        if (val is string asString && int.TryParse(asString, out int asInt))
-                            return spec.values[asInt];
-                        return val;
-                    }
-                case "bool":
-                    {
-                        if (val is bool asBool)
-                            return asBool;
-                        if (val is string asString)
-                        {
-                            if (int.TryParse(asString, out int asInt))
-                                return asInt == 1;
-                            if (bool.TryParse(asString, out asBool))
-                                return asBool;
-                        }
-                        throw new Exception();
-                    }
-                default:
-                    throw new Exception();
+                return Convert.ChangeType(state.value, typeof(long));
             }
+
+            if (spec.type == "number")
+            {
+                return Convert.ToInt64(val);
+            }
+
+            throw new Exception();
         }
 
         private static JToken Transform(JToken token, Func<JToken, JToken> action)
@@ -404,6 +372,90 @@ namespace ZwaveMqttTemplater
             using StreamReader sr = new StreamReader(strm, Encoding.UTF8);
 
             return JObject.Parse(sr.ReadToEnd());
+        }
+    }
+
+    class Z2mAssociation : IEquatable<Z2mAssociation>
+    {
+        [JsonProperty("nodeId")]
+        public int NodeId { get; set; }
+
+        [JsonProperty("endpoint")]
+        public int Endpoint { get; set; }
+
+        public Z2mAssociation(int nodeId, int endpoint)
+        {
+            NodeId = nodeId;
+            Endpoint = endpoint;
+        }
+
+        public bool Equals(Z2mAssociation other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return NodeId == other.NodeId && Endpoint == other.Endpoint;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Z2mAssociation)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(NodeId, Endpoint);
+        }
+
+        public static bool operator ==(Z2mAssociation left, Z2mAssociation right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Z2mAssociation left, Z2mAssociation right)
+        {
+            return !Equals(left, right);
+        }
+    }
+
+    class DesiredAssociationsContainer
+    {
+        public Dictionary<string, DesiredAssociations> Nodes { get; set; }
+    }
+
+    class DesiredAssociations
+    {
+        /// <summary>
+        /// Group => Node.Endpoint
+        /// </summary>
+        public Dictionary<int, string[]> Links { get; set; }
+
+        public IEnumerable<Z2mAssociation> GetLinks(Z2MContainer nodes, int groupId)
+        {
+            if (Links == null || !Links.TryGetValue(groupId, out string[] links))
+                yield break;
+
+            foreach (string link in links)
+            {
+                string[] split = link.Split('.');
+                string node = split[0];
+                int endpoint = split.Length == 2 ? Convert.ToInt32(split[1]) : 0;
+
+                if (int.TryParse(node, out int nodeId))
+                {
+                    yield return new Z2mAssociation(nodeId, Convert.ToInt32(split[1]));
+                }
+                else
+                {
+                    Z2MNode target = nodes.GetByName(node).Single();
+                    if (target == null)
+                        throw new Exception();
+
+                    yield return new Z2mAssociation(target.id, endpoint);
+                }
+            }
         }
     }
 }

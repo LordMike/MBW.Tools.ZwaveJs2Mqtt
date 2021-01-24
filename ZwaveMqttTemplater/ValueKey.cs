@@ -4,24 +4,26 @@ namespace ZwaveMqttTemplater
 {
     class ValueKey : IEquatable<ValueKey>
     {
-        public int NodeId { get; set; }
+        public int NodeId { get; }
 
-        public int Class { get; set; }
+        public string Key { get; }
 
-        public int Instance { get; set; }
-
-        public int Index { get; set; }
+        public ValueKey(int nodeId, string key)
+        {
+            NodeId = nodeId;
+            Key = key;
+        }
 
         public override string ToString()
         {
-            return $"{NodeId}-{Class}-{Instance}-{Index}";
+            return $"{NodeId}-{Key}";
         }
 
         public bool Equals(ValueKey other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return NodeId == other.NodeId && Class == other.Class && Instance == other.Instance && Index == other.Index;
+            return NodeId == other.NodeId && Key == other.Key;
         }
 
         public override bool Equals(object obj)
@@ -34,7 +36,7 @@ namespace ZwaveMqttTemplater
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(NodeId, Instance, Index);
+            return HashCode.Combine(NodeId, Key);
         }
     }
 }

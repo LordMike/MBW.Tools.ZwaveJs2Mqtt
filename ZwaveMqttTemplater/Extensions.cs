@@ -8,7 +8,7 @@ namespace ZwaveMqttTemplater
         {
             store.Set(topic, Encoding.UTF8.GetBytes(payload), retain);
         }
-
+        
         public static void SetBlindly(this MqttStore store, string topic, string payload)
         {
             store.SetBlindly(topic, Encoding.UTF8.GetBytes(payload));
