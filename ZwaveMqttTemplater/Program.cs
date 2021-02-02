@@ -50,7 +50,7 @@ namespace ZwaveMqttTemplater
 
                 //await HandleAssociationsConfig(mqttClient, store, nodes);
                 await HandleHassConfigs(store);
-                //await HandleDeviceConfigs(store, nodes);
+                await HandleDeviceConfigs(store, nodes);
 
                 List<string> topics = store.GetTopicsToSet().ToList();
 
@@ -225,12 +225,15 @@ namespace ZwaveMqttTemplater
 
             HandleHassConfigs("AeotecDoorWindowSensor7", "window_1_2");
             HandleHassConfigs("AeotecDoorWindowSensor7", "window_1_3");
-            HandleHassConfigs("AeotecDoorWindowSensor7", "window_1_4");
             HandleHassConfigs("AeotecDoorWindowSensor7", "window_2_2");
             HandleHassConfigs("AeotecDoorWindowSensor7", "window_3_2");
-            HandleHassConfigs("AeotecDoorWindowSensor7", "window_4_3");
-            HandleHassConfigs("AeotecDoorWindowSensor7", "window_5_2");
             HandleHassConfigs("AeotecDoorWindowSensor7", "window_22_1");
+            HandleHassConfigs("AeotecDoorWindowSensor7", "door_40_1");
+            HandleHassConfigs("AeotecDoorWindowSensor7", "door_40_2");
+            
+            HandleHassConfigs("SensativeStick", "window_1_4");
+            HandleHassConfigs("SensativeStick", "window_4_3");
+            HandleHassConfigs("SensativeStick", "window_5_2");
 
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_2");
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_1");

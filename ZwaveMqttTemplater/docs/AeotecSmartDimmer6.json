@@ -1,11 +1,11 @@
 ﻿{
   "light": {
     "dimmer": {
-      "brightness_command_topic": "zwavejs2mqtt/NODE_NAME/38/1/targetValue/set",
+      "brightness_command_topic": "zwavejs2mqtt/NODE_NAME/38/2/targetValue/set",
       "brightness_scale": 99,
-      "brightness_state_topic": "zwavejs2mqtt/NODE_NAME/38/1/currentValue",
+      "brightness_state_topic": "zwavejs2mqtt/NODE_NAME/38/2/currentValue",
       "brightness_value_template": "{{ value_json.value }}",
-      "command_topic": "zwavejs2mqtt/NODE_NAME/1/targetValue",
+      "command_topic": "zwavejs2mqtt/NODE_NAME/38/2/targetValue/set",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -16,12 +16,14 @@
       },
       "name": "NODE_NAME_dimmer",
       "on_command_type": "brightness",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/38/1/currentValue",
-      "state_value_template": "{{ \"OFF\" if value_json.value == 0 else \"ON\" }}",
+      "payload_on": 99,
+      "payload_off": 0,
+      "state_topic": "zwavejs2mqtt/NODE_NAME/38/2/currentValue",
+      "state_value_template": "{{ 0 if value_json.value == 0 else 99 }}",
       "unique_id": "zwave2mqtt_NODE_NAME_dimmer"
     },
     "rgb": {
-      "command_topic": "zwavejs2mqtt/NODE_NAME/51/2/targetColor/set",
+      "command_topic": "zwavejs2mqtt/NODE_NAME/51/2/hexColor/set",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -31,14 +33,15 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_rgb",
-      "optimistic": true,
+      "on_command_type": "brightness",
+      "payload_on": "#ffffff",
       "payload_off": "#000000",
       "rgb_command_template": "{{ \"#%02x%02x%02x\" | format(red, green, blue)}}",
-      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/2/targetColor/set",
-      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/2/currentColor",
-      "rgb_value_template": "{{ value_json.value[1:3] | int(0, 16) }},{{ value_json.value[3:5] | int(0, 16) }},{{ value_json.value[5:7] | int(0, 16) }}",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/51/2/currentColor",
-      "state_value_template": "{{ \"OFF\" if value_json.value == '#000000' else \"ON\" }}",
+      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/2/hexColor/set",
+      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/2/hexColor",
+      "rgb_value_template": "{{ value_json.value[0:2] | int(0, 16) }},{{ value_json.value[2:4] | int(0, 16) }},{{ value_json.value[4:6] | int(0, 16) }}",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/51/2/hexColor",
+      "state_value_template": "{{ '#000000' if value_json.value == '000000' else '#ffffff' }}",
       "unique_id": "zwave2mqtt_NODE_NAME_rgb"
     }
   },

@@ -1,8 +1,9 @@
 ﻿### ZDB5100
 # Enable dimming
-# Trailing edge dimming. (Default)
-# Leading edge dimming
-product:ZDB5100	112-0-4	Trailing edge dimming. (Default)
+# 0 No dimming
+# 1 Trailing edge dimming. (Default)
+# 2 Leading edge dimming
+product:ZDB5100	112-0-4	1
 
 # Remove default colors
 product:ZDB5100	112-0-22	0
@@ -61,6 +62,13 @@ name:wallswitch_30_2	112-0-4	0
 ## Enable LED to follow state one some switches
 #name:wallswitch_30_2	112-0-20	1
 #name:wallswitch_30_2	112-0-22	50065152	# static color for ON state
+
+### Sensative Strips
+# Send Binary Sensor reports
+product:11-01-011	112-0-1	0
+
+# Disable LED
+product:11-01-011	112-0-2	0
 
 # ### Aeotec door window sensor 6
 # # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW112-B&cert=ZC10-16010007
