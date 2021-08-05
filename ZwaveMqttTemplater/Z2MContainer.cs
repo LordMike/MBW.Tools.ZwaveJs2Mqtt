@@ -7,16 +7,16 @@ namespace ZwaveMqttTemplater
 {
     class Z2MContainer
     {
-        private readonly List<Z2MNode> _nodes;
+        private readonly Dictionary<int, Z2MNode> _nodes;
 
         public Z2MContainer(List<Z2MNode> nodes)
         {
-            _nodes = nodes;
+            _nodes = nodes.ToDictionary(s => s.id);
         }
 
         private IEnumerable<Z2MNode> GetBaseQuery()
         {
-            return _nodes.Where(s => !s.failed);
+            return _nodes.Values.Where(s => !s.failed);
         }
 
         public IEnumerable<Z2MNode> GetByNameFilter(string filter)
@@ -27,7 +27,7 @@ namespace ZwaveMqttTemplater
 
         public IEnumerable<Z2MNode> GetByName(string name)
         {
-            return GetBaseQuery().Where(s => s.name?.Equals(name,StringComparison.OrdinalIgnoreCase) ?? false);
+            return GetBaseQuery().Where(s => s.name?.Equals(name, StringComparison.OrdinalIgnoreCase) ?? false);
         }
 
         public IEnumerable<Z2MNode> GetByProduct(string filter)
@@ -58,7 +58,7 @@ namespace ZwaveMqttTemplater
 
         public IEnumerable<Z2MNode> GetAll(bool includeRemoved = false)
         {
-            return _nodes.Where(s => includeRemoved || !s.failed);
+            return _nodes.Values.Where(s => includeRemoved || !s.failed);
         }
 
         public Z2MNode GetNode(int nodeId)

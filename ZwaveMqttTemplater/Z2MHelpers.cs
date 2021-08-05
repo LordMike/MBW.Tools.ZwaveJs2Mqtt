@@ -69,7 +69,7 @@ namespace ZwaveMqttTemplater
             if (result == null)
                 throw new Exception();
 
-            await client.PublishAsync(prefix, Array.Empty<byte>());
+            //await client.PublishAsync(prefix, Array.Empty<byte>());
 
             return result;
         }

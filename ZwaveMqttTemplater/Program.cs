@@ -223,14 +223,14 @@ namespace ZwaveMqttTemplater
             HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_30_1");
             HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_4_2");
 
-            HandleHassConfigs("AeotecDoorWindowSensor7", "window_1_2");
-            HandleHassConfigs("AeotecDoorWindowSensor7", "window_1_3");
             HandleHassConfigs("AeotecDoorWindowSensor7", "window_2_2");
             HandleHassConfigs("AeotecDoorWindowSensor7", "window_3_2");
             HandleHassConfigs("AeotecDoorWindowSensor7", "window_22_1");
             HandleHassConfigs("AeotecDoorWindowSensor7", "door_40_1");
             HandleHassConfigs("AeotecDoorWindowSensor7", "door_40_2");
             
+            HandleHassConfigs("SensativeStick", "window_1_2");
+            HandleHassConfigs("SensativeStick", "window_1_3");
             HandleHassConfigs("SensativeStick", "window_1_4");
             HandleHassConfigs("SensativeStick", "window_4_3");
             HandleHassConfigs("SensativeStick", "window_5_2");
@@ -258,7 +258,7 @@ namespace ZwaveMqttTemplater
 
             // Apply all configs in order to get final setup
             // product:ZDB5100 Matrix	1-31-2[0x33]	0
-            Regex lineParser = new Regex(@"^(?<type>\w+):(?<filter>[\w\s]+)\t(?<key>[0-9\-]+)\t(?<value>[^#\n]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            Regex lineParser = new Regex(@"^(?<type>\w+):(?<filter>[\w\s\d\-]+)\t(?<key>[0-9\-]+)\t(?<value>[^#\n]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             Dictionary<ValueKey, object> desiredValues = new Dictionary<ValueKey, object>();
 
             foreach (string configLine in configLines)
