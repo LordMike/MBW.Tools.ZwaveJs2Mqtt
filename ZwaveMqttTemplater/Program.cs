@@ -246,8 +246,10 @@ namespace ZwaveMqttTemplater
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_4");
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_5");
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_31");
-            
+
             HandleHassConfigs("NorthQGas9121", "meter_gas");
+
+            HandleHassConfigs("VaillantEcotecEbus", "EcoTECBoiler");
         }
 
         private static async Task HandleDeviceConfigs(MqttStore store, Z2MContainer z2MContainer)
