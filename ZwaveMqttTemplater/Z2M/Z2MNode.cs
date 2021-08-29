@@ -22,7 +22,7 @@ namespace ZwaveMqttTemplater.Z2M
         public bool interviewCompleted { get; set; }
         public string firmwareVersion { get; set; }
         public bool isBeaming { get; set; }
-        public bool isSecure { get; set; }
+        //public bool isSecure { get; set; }
         public bool keepAwake { get; set; }
         public object maxBaudRate { get; set; }
         public bool? isRouting { get; set; }
