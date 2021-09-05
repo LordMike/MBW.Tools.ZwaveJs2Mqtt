@@ -287,7 +287,8 @@
       "state_topic": "ebusd/bai/FanSpeed",
       "unique_id": "ebusd_NODE_NAME_FanSpeed",
       "value_template": "{{ value_json['0'].value }}",
-      "expire_after": 1800
+      "expire_after": 1800,
+      "state_class": "measurement"
     },
     "FanStarts": {
       "device": {
@@ -317,7 +318,8 @@
       "state_topic": "ebusd/bai/ReturnTemp",
       "unique_id": "ebusd_NODE_NAME_ReturnTemp",
       "value_template": "{{ value_json.temp.value }}",
-      "expire_after": 1800
+      "expire_after": 1800,
+      "state_class": "measurement"
     },
     "ReturnTempMax": {
       "device": {
@@ -349,7 +351,8 @@
       "state_topic": "ebusd/bai/FlowTemp",
       "unique_id": "ebusd_NODE_NAME_FlowTemp",
       "value_template": "{{ value_json.temp.value }}",
-      "expire_after": 1800
+      "expire_after": 1800,
+      "state_class": "measurement"
     },
     "FlowTempDesired": {
       "device": {
@@ -450,7 +453,8 @@
       "state_topic": "ebusd/bai/HwcWaterflow",
       "unique_id": "ebusd_NODE_NAME_HwcWaterflow",
       "value_template": "{{ value_json.uin100.value }}",
-      "expire_after": 1800
+      "expire_after": 1800,
+      "state_class": "measurement"
     },
     "HwcWaterflowMax": {
       "device": {
@@ -582,7 +586,8 @@
       "state_topic": "ebusd/bai/StorageTemp",
       "unique_id": "ebusd_NODE_NAME_StorageTemp",
       "value_template": "{{ value_json.temp.value }}",
-      "expire_after": 1800
+      "expire_after": 1800,
+      "state_class": "measurement"
     },
     "StorageLoadTimeMax": {
       "device": {
@@ -612,7 +617,8 @@
       "state_topic": "ebusd/bai/HwcTemp",
       "unique_id": "ebusd_NODE_NAME_HwcTemp",
       "value_template": "{{ value_json.temp.value }}",
-      "expire_after": 1800
+      "expire_after": 1800,
+      "state_class": "measurement"
     },
     "HwcTempDesired": {
       "device": {
@@ -714,7 +720,8 @@
       "state_topic": "ebusd/bai/WaterPressure",
       "unique_id": "ebusd_NODE_NAME_WaterPressure",
       "value_template": "{{ value_json.press.value }}",
-      "expire_after": 1800
+      "expire_after": 1800,
+      "state_class": "measurement"
     }
   }
 }
