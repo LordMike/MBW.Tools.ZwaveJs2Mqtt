@@ -250,6 +250,7 @@ namespace ZwaveMqttTemplater
             HandleHassConfigs("NorthQGas9121", "meter_gas");
 
             HandleHassConfigs("VaillantEcotecEbus", "EcoTECBoiler");
+            HandleHassConfigs("KamstrupPower", "KamstrupPower");
         }
 
         private static async Task HandleDeviceConfigs(MqttStore store, Z2MContainer z2MContainer)

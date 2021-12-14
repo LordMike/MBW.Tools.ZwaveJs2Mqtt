@@ -312,7 +312,7 @@
         "name": "EcoTEC Pro Boiler"
       },
       "device_class": "temperature",
-      "unit_of_measurement": "C",
+      "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/ReturnTemp",
       "name": "Flow return temperature",
       "state_topic": "ebusd/bai/ReturnTemp",
@@ -329,7 +329,7 @@
         "name": "EcoTEC Pro Boiler"
       },
       "device_class": "temperature",
-      "unit_of_measurement": "C",
+      "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/ReturnTempMax",
       "name": "Flow return temperature max",
       "state_topic": "ebusd/bai/ReturnTempMax",
@@ -345,7 +345,7 @@
         "name": "EcoTEC Pro Boiler"
       },
       "device_class": "temperature",
-      "unit_of_measurement": "C",
+      "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/FlowTemp",
       "name": "Flow temperature",
       "state_topic": "ebusd/bai/FlowTemp",
@@ -362,7 +362,7 @@
         "name": "EcoTEC Pro Boiler"
       },
       "device_class": "temperature",
-      "unit_of_measurement": "C",
+      "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/FlowTempDesired",
       "name": "Flow temperature desired",
       "state_topic": "ebusd/bai/FlowTempDesired",
@@ -506,7 +506,7 @@
         "name": "EcoTEC Pro Boiler"
       },
       "device_class": "temperature",
-      "unit_of_measurement": "C",
+      "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/StorageTempDesired",
       "name": "Hot water tank temp desired",
       "state_topic": "ebusd/bai/StorageTempDesired",
@@ -536,7 +536,7 @@
         "name": "EcoTEC Pro Boiler"
       },
       "device_class": "temperature",
-      "unit_of_measurement": "C",
+      "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/StorageTempMax",
       "name": "Hot water tank temp max",
       "state_topic": "ebusd/bai/StorageTempMax",
@@ -580,7 +580,7 @@
         "name": "EcoTEC Pro Boiler"
       },
       "device_class": "temperature",
-      "unit_of_measurement": "C",
+      "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/StorageTemp",
       "name": "Hot water tank temp",
       "state_topic": "ebusd/bai/StorageTemp",
@@ -611,7 +611,7 @@
         "name": "EcoTEC Pro Boiler"
       },
       "device_class": "temperature",
-      "unit_of_measurement": "C",
+      "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/HwcTemp",
       "name": "Hot water temp",
       "state_topic": "ebusd/bai/HwcTemp",
@@ -628,7 +628,7 @@
         "name": "EcoTEC Pro Boiler"
       },
       "device_class": "temperature",
-      "unit_of_measurement": "C",
+      "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/HwcTempDesired",
       "name": "Hot water temp desired",
       "state_topic": "ebusd/bai/HwcTempDesired",
@@ -704,6 +704,20 @@
       "state_topic": "ebusd/bai/Statenumber",
       "unique_id": "ebusd_NODE_NAME_Statenumber",
       "value_template": "{{ value_json['0'].value }}",
+      "expire_after": 1800
+    },
+    "Statenumber_text": {
+      "device": {
+        "identifiers": [ "ebusd_NODE_NAME" ],
+        "manufacturer": "Vaillant",
+        "model": "EcoTEC Boiler",
+        "name": "EcoTEC Pro Boiler"
+      },
+      "json_attributes_topic": "ebusd/bai/Statenumber",
+      "name": "Status text",
+      "state_topic": "ebusd/bai/Statenumber",
+      "unique_id": "ebusd_NODE_NAME_Statenumber_text",
+      "value_template": "{{ {0:'Intet varmebehov',1:'Varme blæserfremløb',2:'Varme pumpefremløb',3:'Varme tænding',4:'Varme brænder til',6:'Varme blæseefterløb',7:'Varme pumpeefterløb',8:'Restspærretid varmebehov',20:'Krav om beholderopvarmning',24:'Beholderopvarmning brænder til',31:'Sommerdrift eller intet varmekrav',34:'Varme frostsikring'}[value_json['0'].value] }}",
       "expire_after": 1800
     },
     "WaterPressure": {
