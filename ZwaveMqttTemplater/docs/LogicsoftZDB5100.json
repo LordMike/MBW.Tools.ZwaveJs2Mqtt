@@ -16,14 +16,14 @@
       },
       "name": "NODE_NAME_dimmer",
       "on_command_type": "brightness",
-      "payload_on": "true",
       "payload_off": "false",
+      "payload_on": "true",
       "state_topic": "zwavejs2mqtt/NODE_NAME/38/5/currentValue",
       "state_value_template": "{{ 'false' if value_json.value == 0 else 'true' }}",
       "unique_id": "zwave2mqtt_NODE_NAME_dimmer"
     },
     "rgb_1": {
-      "command_topic": "zwavejs2mqtt/NODE_NAME/51/1/hexColor/set",
+      "command_topic": "zwavejs2mqtt/NODE_NAME/37/1/targetValue/set",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -33,20 +33,17 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_rgb_1",
-      "on_command_type": "brightness",
+      "on_command_type": "last",
       "optimistic": true,
-      "payload_off": "#000000",
-      "payload_on": "#ffffff",
-      "rgb_command_template": "{{ \"#%02x%02x%02x\" | format(red, green, blue)}}",
-      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/1/hexColor/set",
-      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/1/hexColor",
-      "rgb_value_template": "{{ value_json.value[0:2] | int(0, 16) }},{{ value_json.value[2:4] | int(0, 16) }},{{ value_json.value[4:6] | int(0, 16) }}",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/51/1/hexColor",
-      "state_value_template": "{{ '#000000' if value_json.value == '000000' else '#ffffff' }}",
-      "unique_id": "zwave2mqtt_NODE_NAME_rgb_1"
+      "rgb_command_template": "{{ {'red': red, 'green': green, 'blue': blue}|to_json }}",
+      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/1/targetColor/set",
+      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/1/currentColor",
+      "rgb_value_template": "{{ value_json.value.red }},{{ value_json.value.green }},{{ value_json.value.blue }}",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/37/1/currentValue",
+      "state_value_template": "{{ value_template.json }}"
     },
     "rgb_2": {
-      "command_topic": "zwavejs2mqtt/NODE_NAME/51/2/hexColor/set",
+      "command_topic": "zwavejs2mqtt/NODE_NAME/37/2/targetValue/set",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -56,20 +53,18 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_rgb_2",
-      "on_command_type": "brightness",
+      "on_command_type": "last",
       "optimistic": true,
-      "payload_on": "#ffffff",
-      "payload_off": "#000000",
-      "rgb_command_template": "{{ \"#%02x%02x%02x\" | format(red, green, blue)}}",
-      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/2/hexColor/set",
-      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/2/hexColor",
-      "rgb_value_template": "{{ value_json.value[0:2] | int(0, 16) }},{{ value_json.value[2:4] | int(0, 16) }},{{ value_json.value[4:6] | int(0, 16) }}",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/51/2/hexColor",
-      "state_value_template": "{{ '#000000' if value_json.value == '000000' else '#ffffff' }}",
+      "rgb_command_template": "{{ {'red': red, 'green': green, 'blue': blue}|to_json }}",
+      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/2/targetColor/set",
+      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/2/currentColor",
+      "rgb_value_template": "{{ value_json.value.red }},{{ value_json.value.green }},{{ value_json.value.blue }}",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/37/2/currentValue",
+      "state_value_template": "{{ value_template.json }}",
       "unique_id": "zwave2mqtt_NODE_NAME_rgb_2"
     },
     "rgb_3": {
-      "command_topic": "zwavejs2mqtt/NODE_NAME/51/3/hexColor/set",
+      "command_topic": "zwavejs2mqtt/NODE_NAME/37/3/targetValue/set",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -79,20 +74,18 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_rgb_3",
-      "on_command_type": "brightness",
+      "on_command_type": "last",
       "optimistic": true,
-      "payload_on": "#ffffff",
-      "payload_off": "#000000",
-      "rgb_command_template": "{{ \"#%02x%02x%02x\" | format(red, green, blue)}}",
-      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/3/hexColor/set",
-      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/3/hexColor",
-      "rgb_value_template": "{{ value_json.value[0:2] | int(0, 16) }},{{ value_json.value[2:4] | int(0, 16) }},{{ value_json.value[4:6] | int(0, 16) }}",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/51/3/hexColor",
-      "state_value_template": "{{ '#000000' if value_json.value == '000000' else '#ffffff' }}",
+      "rgb_command_template": "{{ {'red': red, 'green': green, 'blue': blue}|to_json }}",
+      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/3/targetColor/set",
+      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/3/currentColor",
+      "rgb_value_template": "{{ value_json.value.red }},{{ value_json.value.green }},{{ value_json.value.blue }}",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/37/3/currentValue",
+      "state_value_template": "{{ value_template.json }}",
       "unique_id": "zwave2mqtt_NODE_NAME_rgb_3"
     },
     "rgb_4": {
-      "command_topic": "zwavejs2mqtt/NODE_NAME/51/4/hexColor/set",
+      "command_topic": "zwavejs2mqtt/NODE_NAME/37/4/targetValue/set",
       "device": {
         "identifiers": [
           "zwave2mqtt_NODE_NAME"
@@ -102,16 +95,14 @@
         "name": "NODE_NAME"
       },
       "name": "NODE_NAME_rgb_4",
-      "on_command_type": "brightness",
+      "on_command_type": "last",
       "optimistic": true,
-      "payload_on": "#ffffff",
-      "payload_off": "#000000",
-      "rgb_command_template": "{{ \"#%02x%02x%02x\" | format(red, green, blue)}}",
-      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/4/hexColor/set",
-      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/4/hexColor",
-      "rgb_value_template": "{{ value_json.value[0:2] | int(0, 16) }},{{ value_json.value[2:4] | int(0, 16) }},{{ value_json.value[4:6] | int(0, 16) }}",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/51/4/hexColor",
-      "state_value_template": "{{ '#000000' if value_json.value == '000000' else '#ffffff' }}",
+      "rgb_command_template": "{{ {'red': red, 'green': green, 'blue': blue}|to_json }}",
+      "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/4/targetColor/set",
+      "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/4/currentColor",
+      "rgb_value_template": "{{ value_json.value.red }},{{ value_json.value.green }},{{ value_json.value.blue }}",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/37/4/currentValue",
+      "state_value_template": "{{ value_template.json }}",
       "unique_id": "zwave2mqtt_NODE_NAME_rgb_4"
     }
   },
@@ -126,7 +117,7 @@
       "name": "NODE_NAME_button_1",
       "state_topic": "zwavejs2mqtt/NODE_NAME/91/0/scene/001",
       "unique_id": "zwave2mqtt_NODE_NAME_button_1",
-      "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times'][value_json.value] }}"
+      "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times', ''][value_json.value] if 'value' in value_json else '' }}"
     },
     "button_2": {
       "device": {
@@ -138,7 +129,7 @@
       "name": "NODE_NAME_button_2",
       "state_topic": "zwavejs2mqtt/NODE_NAME/91/0/scene/002",
       "unique_id": "zwave2mqtt_NODE_NAME_button_2",
-      "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times'][value_json.value] }}"
+      "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times', ''][value_json.value] if 'value' in value_json else '' }}"
     },
     "button_3": {
       "device": {
@@ -150,7 +141,7 @@
       "name": "NODE_NAME_button_3",
       "state_topic": "zwavejs2mqtt/NODE_NAME/91/0/scene/003",
       "unique_id": "zwave2mqtt_NODE_NAME_button_3",
-      "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times'][value_json.value] }}"
+      "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times', ''][value_json.value] if 'value' in value_json else '' }}"
     },
     "button_4": {
       "device": {
@@ -162,7 +153,7 @@
       "name": "NODE_NAME_button_4",
       "state_topic": "zwavejs2mqtt/NODE_NAME/91/0/scene/004",
       "unique_id": "zwave2mqtt_NODE_NAME_button_4",
-      "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times'][value_json.value] }}"
+      "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times', ''][value_json.value] if 'value' in value_json else '' }}"
     }
   }
 }

@@ -86,35 +86,38 @@ product:11-01-011	112-0-2	0
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZWA008-C&cert=ZC10-19066568
 # Disable tilt sensor
 product:ZWA008	112-0-14	0
+product:ZWA008	132-0-wakeUpInterval	1209600	# 14 days
 
 ### Aeotec doorbell
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW162-C&cert=ZC10-19046416&type=mini
 # Sound levels
-product:ZW162 Doorbell 6	121-1-2	0
-product:ZW162 Doorbell 6	121-2-2	0
-product:ZW162 Doorbell 6	121-3-2	25 # Doorbell 1
-product:ZW162 Doorbell 6	121-4-2	0
-product:ZW162 Doorbell 6	121-5-2	0
-product:ZW162 Doorbell 6	121-6-2	0
-product:ZW162 Doorbell 6	121-7-2	0
-product:ZW162 Doorbell 6	121-8-2	0
+product:ZW162 Doorbell 6	121-1-defaultVolume	0
+product:ZW162 Doorbell 6	121-2-defaultVolume	0
+product:ZW162 Doorbell 6	121-3-defaultVolume	25 # Doorbell 1
+product:ZW162 Doorbell 6	121-4-defaultVolume	0
+product:ZW162 Doorbell 6	121-5-defaultVolume	0
+product:ZW162 Doorbell 6	121-6-defaultVolume	0
+product:ZW162 Doorbell 6	121-7-defaultVolume	0
+product:ZW162 Doorbell 6	121-8-defaultVolume	0
 
 # Ding dong chime
-product:ZW162 Doorbell 6	121-3-3	1
-product:ZW164 Indoor Siren 6	121-4-3	1
+product:ZW162 Doorbell 6	121-3-defaultToneId	1
 
 ### Aeotec indoor siren
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW164-A&cert=ZC10-19046417&type=mini
 # Sound levels
-product:ZW164 Indoor Siren 6	121-1-2	0
-product:ZW164 Indoor Siren 6	121-2-2	0
-product:ZW164 Indoor Siren 6	121-3-2	0
-product:ZW164 Indoor Siren 6	121-4-2	25 # Doorbell 2 (for some reason, doorbell 1 is aka. "Tampering")
-product:ZW164 Indoor Siren 6	121-5-2	0
-product:ZW164 Indoor Siren 6	121-6-2	0
-product:ZW164 Indoor Siren 6	121-7-2	0
-product:ZW164 Indoor Siren 6	121-8-2	0
-product:ZW164 Indoor Siren 6	121-9-2	0
+product:ZW164 Indoor Siren 6	121-1-defaultVolume	0
+product:ZW164 Indoor Siren 6	121-2-defaultVolume	0
+product:ZW164 Indoor Siren 6	121-3-defaultVolume	0
+product:ZW164 Indoor Siren 6	121-4-defaultVolume	25 # Doorbell 2 (for some reason, doorbell 1 is aka. "Tampering")
+product:ZW164 Indoor Siren 6	121-5-defaultVolume	0
+product:ZW164 Indoor Siren 6	121-6-defaultVolume	0
+product:ZW164 Indoor Siren 6	121-7-defaultVolume	0
+product:ZW164 Indoor Siren 6	121-8-defaultVolume	0
+product:ZW164 Indoor Siren 6	121-9-defaultVolume	0
+
+# Ding dong chime
+product:ZW164 Indoor Siren 6	121-4-defaultToneId	1
 
 ### ZW099 Smart Dimmer 6 (AEON Labs) 
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW099-A02&cert=ZC10-17035455

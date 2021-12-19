@@ -246,6 +246,7 @@ namespace ZwaveMqttTemplater
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_4");
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_5");
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_31");
+            HandleHassConfigs("LogicsoftZBA7140", "button_4_4");
 
             HandleHassConfigs("NorthQGas9121", "meter_gas");
 
@@ -261,7 +262,7 @@ namespace ZwaveMqttTemplater
 
             // Apply all configs in order to get final setup
             // product:ZDB5100 Matrix	1-31-2[0x33]	0
-            Regex lineParser = new Regex(@"^(?<type>\w+):(?<filter>[\w\s\d\-]+)\t(?<key>[0-9\-]+)\t(?<value>[^#\n]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            Regex lineParser = new Regex(@"^(?<type>\w+):(?<filter>[\w\s\d\-]+)\t(?<key>[^\t]+)\t(?<value>[^#\n]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             Dictionary<ValueKey, object> desiredValues = new Dictionary<ValueKey, object>();
 
             foreach (string configLine in configLines)
