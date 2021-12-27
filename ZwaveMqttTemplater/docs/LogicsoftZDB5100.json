@@ -16,8 +16,10 @@
       "command_topic": "zwavejs2mqtt/NODE_NAME/38/5/targetValue/set",
       "name": "NODE_NAME_dimmer",
       "on_command_type": "brightness",
+      "payload_off": 0,
+      "payload_on": 99,
       "state_topic": "zwavejs2mqtt/NODE_NAME/38/5/currentValue",
-      "state_value_template": "{{ \"OFF\" if value_json.value == 0 else \"ON\" }}",
+      "state_value_template": "{{ 0 if value_json.value == 0 else 99 }}",
       "unique_id": "zwave2mqtt_NODE_NAME_dimmer"
     },
     "rgb_1": {
