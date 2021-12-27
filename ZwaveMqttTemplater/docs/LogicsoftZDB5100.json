@@ -1,37 +1,27 @@
 ﻿{
+  "device": {
+    "identifiers": [
+      "zwave2mqtt_NODE_NAME"
+    ],
+    "manufacturer": "Logic Soft",
+    "model": "ZDB5100 Matrix (0x0121)",
+    "name": "NODE_NAME"
+  },
   "light": {
     "dimmer": {
       "brightness_command_topic": "zwavejs2mqtt/NODE_NAME/38/5/targetValue/set",
       "brightness_scale": 99,
       "brightness_state_topic": "zwavejs2mqtt/NODE_NAME/38/5/currentValue",
       "brightness_value_template": "{{ value_json.value }}",
-      "command_topic": "zwavejs2mqtt/NODE_NAME/37/5/targetValue/set",
-      "device": {
-        "identifiers": [
-          "zwave2mqtt_NODE_NAME"
-        ],
-        "manufacturer": "Logic Soft",
-        "model": "ZDB5100 Matrix (0x0121)",
-        "name": "NODE_NAME"
-      },
+      "command_topic": "zwavejs2mqtt/NODE_NAME/38/5/targetValue/set",
       "name": "NODE_NAME_dimmer",
       "on_command_type": "brightness",
-      "payload_off": "false",
-      "payload_on": "true",
       "state_topic": "zwavejs2mqtt/NODE_NAME/38/5/currentValue",
-      "state_value_template": "{{ 'false' if value_json.value == 0 else 'true' }}",
+      "state_value_template": "{{ \"OFF\" if value_json.value == 0 else \"ON\" }}",
       "unique_id": "zwave2mqtt_NODE_NAME_dimmer"
     },
     "rgb_1": {
       "command_topic": "zwavejs2mqtt/NODE_NAME/37/1/targetValue/set",
-      "device": {
-        "identifiers": [
-          "zwave2mqtt_NODE_NAME"
-        ],
-        "manufacturer": "Logic Soft",
-        "model": "ZDB5100 Matrix (0x0121)",
-        "name": "NODE_NAME"
-      },
       "name": "NODE_NAME_rgb_1",
       "on_command_type": "last",
       "optimistic": true,
@@ -40,18 +30,11 @@
       "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/1/currentColor",
       "rgb_value_template": "{{ value_json.value.red }},{{ value_json.value.green }},{{ value_json.value.blue }}",
       "state_topic": "zwavejs2mqtt/NODE_NAME/37/1/currentValue",
-      "state_value_template": "{{ value_template.json }}"
+      "state_value_template": "{{ value_json.value }}",
+      "unique_id": "zwave2mqtt_NODE_NAME_rgb_1"
     },
     "rgb_2": {
       "command_topic": "zwavejs2mqtt/NODE_NAME/37/2/targetValue/set",
-      "device": {
-        "identifiers": [
-          "zwave2mqtt_NODE_NAME"
-        ],
-        "manufacturer": "Logic Soft",
-        "model": "ZDB5100 Matrix (0x0121)",
-        "name": "NODE_NAME"
-      },
       "name": "NODE_NAME_rgb_2",
       "on_command_type": "last",
       "optimistic": true,
@@ -60,19 +43,11 @@
       "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/2/currentColor",
       "rgb_value_template": "{{ value_json.value.red }},{{ value_json.value.green }},{{ value_json.value.blue }}",
       "state_topic": "zwavejs2mqtt/NODE_NAME/37/2/currentValue",
-      "state_value_template": "{{ value_template.json }}",
+      "state_value_template": "{{ value_json.value }}",
       "unique_id": "zwave2mqtt_NODE_NAME_rgb_2"
     },
     "rgb_3": {
       "command_topic": "zwavejs2mqtt/NODE_NAME/37/3/targetValue/set",
-      "device": {
-        "identifiers": [
-          "zwave2mqtt_NODE_NAME"
-        ],
-        "manufacturer": "Logic Soft",
-        "model": "ZDB5100 Matrix (0x0121)",
-        "name": "NODE_NAME"
-      },
       "name": "NODE_NAME_rgb_3",
       "on_command_type": "last",
       "optimistic": true,
@@ -81,19 +56,11 @@
       "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/3/currentColor",
       "rgb_value_template": "{{ value_json.value.red }},{{ value_json.value.green }},{{ value_json.value.blue }}",
       "state_topic": "zwavejs2mqtt/NODE_NAME/37/3/currentValue",
-      "state_value_template": "{{ value_template.json }}",
+      "state_value_template": "{{ value_json.value }}",
       "unique_id": "zwave2mqtt_NODE_NAME_rgb_3"
     },
     "rgb_4": {
       "command_topic": "zwavejs2mqtt/NODE_NAME/37/4/targetValue/set",
-      "device": {
-        "identifiers": [
-          "zwave2mqtt_NODE_NAME"
-        ],
-        "manufacturer": "Logic Soft",
-        "model": "ZDB5100 Matrix (0x0121)",
-        "name": "NODE_NAME"
-      },
       "name": "NODE_NAME_rgb_4",
       "on_command_type": "last",
       "optimistic": true,
@@ -102,54 +69,30 @@
       "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/4/currentColor",
       "rgb_value_template": "{{ value_json.value.red }},{{ value_json.value.green }},{{ value_json.value.blue }}",
       "state_topic": "zwavejs2mqtt/NODE_NAME/37/4/currentValue",
-      "state_value_template": "{{ value_template.json }}",
+      "state_value_template": "{{ value_json.value }}",
       "unique_id": "zwave2mqtt_NODE_NAME_rgb_4"
     }
   },
   "sensor": {
     "button_1": {
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "Logic Soft",
-        "model": "ZDB5100 Matrix (0x0121)",
-        "name": "NODE_NAME"
-      },
       "name": "NODE_NAME_button_1",
       "state_topic": "zwavejs2mqtt/NODE_NAME/91/0/scene/001",
       "unique_id": "zwave2mqtt_NODE_NAME_button_1",
       "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times', ''][value_json.value] if 'value' in value_json else '' }}"
     },
     "button_2": {
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "Logic Soft",
-        "model": "ZDB5100 Matrix (0x0121)",
-        "name": "NODE_NAME"
-      },
       "name": "NODE_NAME_button_2",
       "state_topic": "zwavejs2mqtt/NODE_NAME/91/0/scene/002",
       "unique_id": "zwave2mqtt_NODE_NAME_button_2",
       "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times', ''][value_json.value] if 'value' in value_json else '' }}"
     },
     "button_3": {
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "Logic Soft",
-        "model": "ZDB5100 Matrix (0x0121)",
-        "name": "NODE_NAME"
-      },
       "name": "NODE_NAME_button_3",
       "state_topic": "zwavejs2mqtt/NODE_NAME/91/0/scene/003",
       "unique_id": "zwave2mqtt_NODE_NAME_button_3",
       "value_template": "{{ ['1Time','DimEnd','DimStart','2Times','3Times', ''][value_json.value] if 'value' in value_json else '' }}"
     },
     "button_4": {
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "Logic Soft",
-        "model": "ZDB5100 Matrix (0x0121)",
-        "name": "NODE_NAME"
-      },
       "name": "NODE_NAME_button_4",
       "state_topic": "zwavejs2mqtt/NODE_NAME/91/0/scene/004",
       "unique_id": "zwave2mqtt_NODE_NAME_button_4",

@@ -1,14 +1,14 @@
 ﻿{
+	"device": {
+		"identifiers": [
+			"zwave2mqtt_NODE_NAME"
+		],
+		"manufacturer": "Strips-MaZw",
+		"model": "Sensative Stick",
+		"name": "NODE_NAME"
+	},
   "binary_sensor": {
     "state": {
-      "device": {
-        "identifiers": [
-          "zwave2mqtt_NODE_NAME"
-        ],
-        "manufacturer": "Strips-MaZw",
-        "model": "Sensative Stick",
-        "name": "NODE_NAME"
-      },
       "device_class": "door",
       "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/48/0/Any",
       "name": "NODE_NAME_state",
@@ -21,14 +21,6 @@
   },
   "sensor": {
     "battery": {
-      "device": {
-        "identifiers": [
-          "zwave2mqtt_NODE_NAME"
-        ],
-        "manufacturer": "Strips-MaZw",
-        "model": "Sensative Stick",
-        "name": "NODE_NAME"
-      },
       "device_class": "battery",
       "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/128/0/level",
       "name": "NODE_NAME_battery",

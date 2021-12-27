@@ -1,14 +1,14 @@
 ﻿{
+	"device": {
+		"identifiers": [
+			"zwave2mqtt_NODE_NAME"
+		],
+		"manufacturer": "Aeotec Limited",
+		"model": "ZWA008 Door Window Sensor 7 (0x0007)",
+		"name": "NODE_NAME"
+	},
   "binary_sensor": {
     "state": {
-      "device": {
-        "identifiers": [
-          "zwave2mqtt_NODE_NAME"
-        ],
-        "manufacturer": "Aeotec Limited",
-        "model": "ZWA008 Door Window Sensor 7 (0x0007)",
-        "name": "NODE_NAME"
-      },
       "device_class": "door",
       "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/113/0/Access_Control/Door_state",
       "name": "NODE_NAME_state",
@@ -21,14 +21,6 @@
   },
   "sensor": {
     "battery": {
-      "device": {
-        "identifiers": [
-          "zwave2mqtt_NODE_NAME"
-        ],
-        "manufacturer": "Aeotec Limited",
-        "model": "ZWA008 Door Window Sensor 7 (0x0007)",
-        "name": "NODE_NAME"
-      },
       "device_class": "battery",
       "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/128/0/level",
       "name": "NODE_NAME_battery",

@@ -1,13 +1,13 @@
 ﻿{
+	"device": {
+		"identifiers": [ "zwave2mqtt_NODE_NAME" ],
+		"manufacturer": "Aeotec Limited",
+		"model": "ZW175 Smart Switch 7 (0x00af)",
+		"name": "NODE_NAME"
+	},
   "switch": {
     "onoff": {
       "command_topic": "zwavejs2mqtt/NODE_NAME/37/0/targetValue/set",
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "Aeotec Limited",
-        "model": "ZW175 Smart Switch 7 (0x00af)",
-        "name": "NODE_NAME"
-      },
       "name": "NODE_NAME_onoff",
       "state_topic": "zwavejs2mqtt/NODE_NAME/37/0/currentValue",
       "unique_id": "zwave2mqtt_NODE_NAME_onoff",
@@ -17,12 +17,6 @@
   "light": {
     "rgb": {
       "command_topic": "zwavejs2mqtt/NODE_NAME/51/0/targetColor/set",
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "Aeotec Limited",
-        "model": "ZW175 Smart Switch 7 (0x00af)",
-        "name": "NODE_NAME"
-      },
       "name": "NODE_NAME_rgb",
       "optimistic": true,
       "payload_off": "#000000",
@@ -37,12 +31,6 @@
   },
   "sensor": {
     "electricity_a_meter": {
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "Aeotec Limited",
-        "model": "ZW175 Smart Switch 7 (0x00af)",
-        "name": "NODE_NAME"
-      },
       "device_class": "power",
       "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66817",
       "name": "NODE_NAME_electricity_a_meter",
@@ -52,12 +40,6 @@
       "value_template": "{{ value_json.value }}"
     },
     "electricity_kwh_meter": {
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "Aeotec Limited",
-        "model": "ZW175 Smart Switch 7 (0x00af)",
-        "name": "NODE_NAME"
-      },
       "device_class": "power",
       "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/65537",
       "name": "NODE_NAME_electricity_kwh_meter",
@@ -67,12 +49,6 @@
       "value_template": "{{ value_json.value }}"
     },
     "electricity_v_meter": {
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "Aeotec Limited",
-        "model": "ZW175 Smart Switch 7 (0x00af)",
-        "name": "NODE_NAME"
-      },
       "device_class": "power",
       "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66561",
       "name": "NODE_NAME_electricity_v_meter",
@@ -82,12 +58,6 @@
       "value_template": "{{ value_json.value }}"
     },
     "electricity_w_meter": {
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "Aeotec Limited",
-        "model": "ZW175 Smart Switch 7 (0x00af)",
-        "name": "NODE_NAME"
-      },
       "device_class": "power",
       "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66049",
       "name": "NODE_NAME_electricity_w_meter",

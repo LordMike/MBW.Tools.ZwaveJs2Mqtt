@@ -1,0 +1,48 @@
+﻿{
+	"device": {
+		"identifiers": [
+			"zwave2mqtt_NODE_NAME"
+		],
+		"manufacturer": "Aeotec Ltd.",
+		"model": "ZWA009 aërQ Temperature and Humidity Sensor v1.0",
+		"name": "NODE_NAME"
+	},
+	"sensor": {
+		"battery": {
+			"device_class": "battery",
+			"json_attributes_topic": "zwavejs2mqtt/NODE_NAME/128/0/level",
+			"name": "NODE_NAME_battery",
+			"state_topic": "zwavejs2mqtt/NODE_NAME/128/0/level",
+			"unique_id": "zwave2mqtt_NODE_NAME_battery",
+			"unit_of_measurement": "%",
+			"value_template": "{{ value_json.value }}"
+		},
+		"temperature": {
+			"device_class": "temperature",
+			"json_attributes_topic": "zwavejs2mqtt/NODE_NAME/49/0/Air_temperature",
+			"name": "NODE_NAME_temperature",
+			"state_topic": "zwavejs2mqtt/NODE_NAME/49/0/Air_temperature",
+			"unique_id": "zwave2mqtt_NODE_NAME_temperature",
+			"unit_of_measurement": "°C",
+			"value_template": "{{ value_json.value }}"
+		},
+		"humidity": {
+			"device_class": "humidity",
+			"json_attributes_topic": "zwavejs2mqtt/NODE_NAME/49/0/Humidity",
+			"name": "NODE_NAME_humidity",
+			"state_topic": "zwavejs2mqtt/NODE_NAME/49/0/Humidity",
+			"unique_id": "zwave2mqtt_NODE_NAME_humidity",
+			"unit_of_measurement": "%",
+			"value_template": "{{ value_json.value }}"
+		},
+		"dew_point": {
+			"device_class": "temperature",
+			"json_attributes_topic": "zwavejs2mqtt/NODE_NAME/49/0/Dew_point",
+			"name": "NODE_NAME_dew_point",
+			"state_topic": "zwavejs2mqtt/NODE_NAME/49/0/Dew_point",
+			"unique_id": "zwave2mqtt_NODE_NAME_dew_point",
+			"unit_of_measurement": "°C",
+			"value_template": "{{ value_json.value }}"
+		}
+	}
+}

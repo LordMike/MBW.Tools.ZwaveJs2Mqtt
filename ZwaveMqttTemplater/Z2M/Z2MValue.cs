@@ -15,8 +15,8 @@
         public string label { get; set; }
         public int _default { get; set; }
         public bool stateless { get; set; }
-        public uint min { get; set; }
-        public uint max { get; set; }
+        public long min { get; set; }
+        public long max { get; set; }
         public bool list { get; set; }
         public Z2MState[] states { get; set; }
         public object value { get; set; }

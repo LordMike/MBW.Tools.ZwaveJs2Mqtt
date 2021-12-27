@@ -1,4 +1,12 @@
 ﻿{
+	"device": {
+		"identifiers": [
+			"zwave2mqtt_NODE_NAME"
+		],
+		"manufacturer": "AEON Labs",
+		"model": "ZW099 Smart Dimmer 6 (0x0063)",
+		"name": "NODE_NAME"
+	},
   "light": {
     "dimmer": {
       "brightness_command_topic": "zwavejs2mqtt/NODE_NAME/38/2/targetValue/set",
@@ -6,14 +14,6 @@
       "brightness_state_topic": "zwavejs2mqtt/NODE_NAME/38/2/currentValue",
       "brightness_value_template": "{{ value_json.value }}",
       "command_topic": "zwavejs2mqtt/NODE_NAME/38/2/targetValue/set",
-      "device": {
-        "identifiers": [
-          "zwave2mqtt_NODE_NAME"
-        ],
-        "manufacturer": "AEON Labs",
-        "model": "ZW099 Smart Dimmer 6 (0x0063)",
-        "name": "NODE_NAME"
-      },
       "name": "NODE_NAME_dimmer",
       "on_command_type": "brightness",
       "payload_on": 99,
@@ -24,14 +24,6 @@
     },
     "rgb": {
       "command_topic": "zwavejs2mqtt/NODE_NAME/51/2/hexColor/set",
-      "device": {
-        "identifiers": [
-          "zwave2mqtt_NODE_NAME"
-        ],
-        "manufacturer": "AEON Labs",
-        "model": "ZW099 Smart Dimmer 6 (0x0063)",
-        "name": "NODE_NAME"
-      },
       "name": "NODE_NAME_rgb",
       "on_command_type": "brightness",
       "payload_on": "#ffffff",
@@ -47,12 +39,6 @@
   },
   "sensor": {
     "electricity_a_meter": {
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "AEON Labs",
-        "model": "ZW099 Smart Dimmer 6 (0x0063)",
-        "name": "NODE_NAME"
-      },
       "device_class": "power",
       "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66817",
       "name": "NODE_NAME_electricity_a_meter",
@@ -62,12 +48,6 @@
       "value_template": "{{ value_json.value }}"
     },
     "electricity_kwh_meter": {
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "AEON Labs",
-        "model": "ZW099 Smart Dimmer 6 (0x0063)",
-        "name": "NODE_NAME"
-      },
       "device_class": "power",
       "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/65537",
       "name": "NODE_NAME_electricity_kwh_meter",
@@ -77,12 +57,6 @@
       "value_template": "{{ value_json.value }}"
     },
     "electricity_v_meter": {
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "AEON Labs",
-        "model": "ZW099 Smart Dimmer 6 (0x0063)",
-        "name": "NODE_NAME"
-      },
       "device_class": "power",
       "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66561",
       "name": "NODE_NAME_electricity_v_meter",
@@ -92,12 +66,6 @@
       "value_template": "{{ value_json.value }}"
     },
     "electricity_w_meter": {
-      "device": {
-        "identifiers": [ "zwave2mqtt_NODE_NAME" ],
-        "manufacturer": "AEON Labs",
-        "model": "ZW099 Smart Dimmer 6 (0x0063)",
-        "name": "NODE_NAME"
-      },
       "device_class": "power",
       "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66049",
       "name": "NODE_NAME_electricity_w_meter",

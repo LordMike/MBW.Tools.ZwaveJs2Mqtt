@@ -3,14 +3,14 @@
   // https://github.com/john30/ebusd-configuration/blob/master/ebusd-2.1.x/en/vaillant/bai.0010006101.inc
   // https://github.com/john30/ebusd-configuration/blob/dc80f9c4084e333aa1d0eb727262e8a77676f8cc/ebusd-2.x.x/en/vaillant/08.bai.HW7401.csv
   // 
+  "device": {
+	  "identifiers": [ "ebusd_NODE_NAME" ],
+	  "manufacturer": "Vaillant",
+	  "model": "EcoTEC Boiler",
+	  "name": "EcoTEC Pro Boiler"
+  },
   "binary_sensor": {
     "currenterror": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "device_class": "problem",
       "json_attributes_topic": "ebusd/bai/currenterror",
       "name": "Current errors status",
@@ -22,12 +22,6 @@
       "expire_after": 1800
     },
     "HwcSwitch": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/HwcSwitch",
       "name": "Hot water switch",
       "state_topic": "ebusd/bai/HwcSwitch",
@@ -36,12 +30,6 @@
       "expire_after": 1800
     },
     "ExternGasvalve": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/ExternGasvalve",
       "name": "External gas valve",
       "state_topic": "ebusd/bai/ExternGasvalve",
@@ -50,12 +38,6 @@
       "expire_after": 1800
     },
     "Flame": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/Flame",
       "name": "Flame",
       "state_topic": "ebusd/bai/Flame",
@@ -64,12 +46,6 @@
       "expire_after": 1800
     },
     "Fluegasvalve": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/Fluegasvalve",
       "name": "Flue gas valve state",
       "state_topic": "ebusd/bai/Fluegasvalve",
@@ -78,12 +54,6 @@
       "expire_after": 1800
     },
     "Gasvalve3UC": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/Gasvalve3UC",
       "name": "Gas valve 3UC state",
       "state_topic": "ebusd/bai/Gasvalve3UC",
@@ -92,12 +62,6 @@
       "expire_after": 1800
     },
     "Gasvalve": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/Gasvalve",
       "name": "Gas valve state",
       "state_topic": "ebusd/bai/Gasvalve",
@@ -106,12 +70,6 @@
       "expire_after": 1800
     },
     "CirPump": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/CirPump",
       "name": "Hot water circulation pump",
       "state_topic": "ebusd/bai/CirPump",
@@ -120,12 +78,6 @@
       "expire_after": 1800
     },
     "HwcDemand": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/HwcDemand",
       "name": "Hot water demand",
       "state_topic": "ebusd/bai/HwcDemand",
@@ -134,12 +86,6 @@
       "expire_after": 1800
     },
     "HwcImpellorSwitch": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/HwcImpellorSwitch",
       "name": "Hot water tapping demand",
       "state_topic": "ebusd/bai/HwcImpellorSwitch",
@@ -148,12 +94,6 @@
       "expire_after": 1800
     },
     "Ignitor": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/Ignitor",
       "name": "Ignition active",
       "state_topic": "ebusd/bai/Ignitor",
@@ -162,12 +102,6 @@
       "expire_after": 1800
     },
     "HeatingSwitch": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/HeatingSwitch",
       "name": "Winter mode active",
       "state_topic": "ebusd/bai/HeatingSwitch",
@@ -178,12 +112,6 @@
   },
   "sensor": {
     "RemainingBoilerblocktime": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/RemainingBoilerblocktime",
       "name": "Boiler remaining anti-cycle time",
       "state_topic": "ebusd/bai/RemainingBoilerblocktime",
@@ -192,12 +120,6 @@
       "expire_after": 1800
     },
     "currenterror_errors": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/currenterror",
       "name": "Current errors",
       "state_topic": "ebusd/bai/currenterror",
@@ -206,12 +128,6 @@
       "expire_after": 1800
     },
     "PositionValveSet": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/PositionValveSet",
       "name": "Diverter valve distribution hot water vs. heating",
       "state_topic": "ebusd/bai/PositionValveSet",
@@ -220,12 +136,6 @@
       "expire_after": 1800
     },
     "ValveMode": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/ValveMode",
       "name": "Diverter valve position",
       "state_topic": "ebusd/bai/ValveMode",
@@ -234,12 +144,6 @@
       "expire_after": 1800
     },
     "ValveStarts": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/ValveStarts",
       "name": "Diverter valve starts",
       "state_topic": "ebusd/bai/ValveStarts",
@@ -248,12 +152,6 @@
       "expire_after": 1800
     },
     "FanMaxSpeedOperation": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/FanMaxSpeedOperation",
       "name": "Fan max speed",
       "state_topic": "ebusd/bai/FanMaxSpeedOperation",
@@ -262,12 +160,6 @@
       "expire_after": 1800
     },
     "FanMinSpeedOperation": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/FanMinSpeedOperation",
       "name": "Fan min speed",
       "state_topic": "ebusd/bai/FanMinSpeedOperation",
@@ -276,12 +168,6 @@
       "expire_after": 1800
     },
     "FanSpeed": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/FanSpeed",
       "name": "Fan speed",
       "state_topic": "ebusd/bai/FanSpeed",
@@ -291,12 +177,6 @@
       "state_class": "measurement"
     },
     "FanStarts": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/FanStarts",
       "name": "Fan starts",
       "state_topic": "ebusd/bai/FanStarts",
@@ -305,12 +185,6 @@
       "expire_after": 1800
     },
     "ReturnTemp": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "device_class": "temperature",
       "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/ReturnTemp",
@@ -322,12 +196,6 @@
       "state_class": "measurement"
     },
     "ReturnTempMax": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "device_class": "temperature",
       "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/ReturnTempMax",
@@ -338,12 +206,6 @@
       "expire_after": 1800
     },
     "FlowTemp": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "device_class": "temperature",
       "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/FlowTemp",
@@ -355,12 +217,6 @@
       "state_class": "measurement"
     },
     "FlowTempDesired": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "device_class": "temperature",
       "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/FlowTempDesired",
@@ -371,12 +227,6 @@
       "expire_after": 1800
     },
     "HcHours": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/HcHours",
       "name": "Heating operation hours",
       "state_topic": "ebusd/bai/HcHours",
@@ -385,12 +235,6 @@
       "expire_after": 1800
     },
     "HcPumpMode": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/HcPumpMode",
       "name": "Heating pump mode",
       "state_topic": "ebusd/bai/HcPumpMode",
@@ -399,12 +243,6 @@
       "expire_after": 1800
     },
     "HcPumpStarts": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/HcPumpStarts",
       "name": "Heating pump starts",
       "state_topic": "ebusd/bai/HcPumpStarts",
@@ -413,12 +251,6 @@
       "expire_after": 1800
     },
     "SecondPumpMode": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/SecondPumpMode",
       "name": "Heating stage-2 pump mode",
       "state_topic": "ebusd/bai/SecondPumpMode",
@@ -428,12 +260,6 @@
       "expire_after": 1800
     },
     "HcStarts": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/HcStarts",
       "name": "Heating starts",
       "state_topic": "ebusd/bai/HcStarts",
@@ -442,12 +268,6 @@
       "expire_after": 1800
     },
     "HwcWaterflow": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/HwcWaterflow",
       "name": "Hot water flow sensor",
       "state_topic": "ebusd/bai/HwcWaterflow",
@@ -457,12 +277,6 @@
       "state_class": "measurement"
     },
     "HwcWaterflowMax": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/HwcWaterflowMax",
       "name": "Hot water flow sensor max",
       "state_topic": "ebusd/bai/HwcWaterflowMax",
@@ -471,12 +285,6 @@
       "expire_after": 1800
     },
     "HwcHours": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/HwcHours",
       "name": "Hot water operation hours",
       "state_topic": "ebusd/bai/HwcHours",
@@ -485,12 +293,6 @@
       "expire_after": 1800
     },
     "HwcStarts": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/HwcStarts",
       "name": "Hot water starts",
       "state_topic": "ebusd/bai/HwcStarts",
@@ -499,12 +301,6 @@
       "expire_after": 1800
     },
     "StorageTempDesired": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "device_class": "temperature",
       "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/StorageTempDesired",
@@ -515,12 +311,6 @@
       "expire_after": 1800
     },
     "StorageLoadPumpHours": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/StorageLoadPumpHours",
       "name": "Hot water tank hours",
       "state_topic": "ebusd/bai/StorageLoadPumpHours",
@@ -529,12 +319,6 @@
       "expire_after": 1800
     },
     "StorageTempMax": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "device_class": "temperature",
       "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/StorageTempMax",
@@ -545,12 +329,6 @@
       "expire_after": 1800
     },
     "Storageloadpump": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/Storageloadpump",
       "name": "Hot water tank pump",
       "state_topic": "ebusd/bai/Storageloadpump",
@@ -559,12 +337,6 @@
       "expire_after": 1800
     },
     "StorageloadPumpStarts": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/StorageloadPumpStarts",
       "name": "Hot water tank starts",
       "state_topic": "ebusd/bai/StorageloadPumpStarts",
@@ -573,12 +345,6 @@
       "expire_after": 1800
     },
     "StorageTemp": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "device_class": "temperature",
       "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/StorageTemp",
@@ -590,12 +356,6 @@
       "state_class": "measurement"
     },
     "StorageLoadTimeMax": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/StorageLoadTimeMax",
       "name": "Hot water tank time max",
       "state_topic": "ebusd/bai/StorageLoadTimeMax",
@@ -604,12 +364,6 @@
       "expire_after": 1800
     },
     "HwcTemp": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "device_class": "temperature",
       "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/HwcTemp",
@@ -621,12 +375,6 @@
       "state_class": "measurement"
     },
     "HwcTempDesired": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "device_class": "temperature",
       "unit_of_measurement": "°C",
       "json_attributes_topic": "ebusd/bai/HwcTempDesired",
@@ -637,12 +385,6 @@
       "expire_after": 1800
     },
     "averageIgnitiontime": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/averageIgnitiontime",
       "name": "Ignition time average",
       "state_topic": "ebusd/bai/averageIgnitiontime",
@@ -651,12 +393,6 @@
       "expire_after": 1800
     },
     "maxIgnitiontime": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/maxIgnitiontime",
       "name": "Ignition time max",
       "state_topic": "ebusd/bai/maxIgnitiontime",
@@ -665,12 +401,6 @@
       "expire_after": 1800
     },
     "minIgnitiontime": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/minIgnitiontime",
       "name": "Ignition time min",
       "state_topic": "ebusd/bai/minIgnitiontime",
@@ -679,12 +409,6 @@
       "expire_after": 1800
     },
     "PumpHours": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/PumpHours",
       "name": "Pump hours (?)",
       "state_topic": "ebusd/bai/PumpHours",
@@ -693,12 +417,6 @@
       "expire_after": 1800
     },
     "Statenumber": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/Statenumber",
       "name": "Status number",
       "state_topic": "ebusd/bai/Statenumber",
@@ -707,12 +425,6 @@
       "expire_after": 1800
     },
     "Statenumber_text": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "json_attributes_topic": "ebusd/bai/Statenumber",
       "name": "Status text",
       "state_topic": "ebusd/bai/Statenumber",
@@ -721,12 +433,6 @@
       "expire_after": 1800
     },
     "WaterPressure": {
-      "device": {
-        "identifiers": [ "ebusd_NODE_NAME" ],
-        "manufacturer": "Vaillant",
-        "model": "EcoTEC Boiler",
-        "name": "EcoTEC Pro Boiler"
-      },
       "device_class": "pressure",
       "unit_of_measurement": "bar",
       "json_attributes_topic": "ebusd/bai/WaterPressure",

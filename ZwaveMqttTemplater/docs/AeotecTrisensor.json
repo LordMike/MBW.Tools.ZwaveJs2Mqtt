@@ -1,0 +1,51 @@
+﻿{
+  "device": {
+    "identifiers": [
+      "zwave2mqtt_NODE_NAME"
+    ],
+    "manufacturer": "Aeotec Ltd.",
+    "model": "ZWA005 TriSensor",
+    "name": "NODE_NAME"
+  },
+  "binary_sensor": {
+    "motion": {
+      "device_class": "motion",
+      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/48/0/Motion",
+      "name": "NODE_NAME_motion",
+      "payload_off": false,
+      "payload_on": true,
+      "state_topic": "zwavejs2mqtt/NODE_NAME/48/0/Motion",
+      "unique_id": "zwave2mqtt_NODE_NAME_motion",
+      "value_template": "{{ value_json.value }}"
+    }
+  },
+  "sensor": {
+    "battery": {
+      "device_class": "battery",
+      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/128/0/level",
+      "name": "NODE_NAME_battery",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/128/0/level",
+      "unique_id": "zwave2mqtt_NODE_NAME_battery",
+      "unit_of_measurement": "%",
+      "value_template": "{{ value_json.value }}"
+    },
+    "temperature": {
+      "device_class": "temperature",
+      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/49/0/Air_temperature",
+      "name": "NODE_NAME_temperature",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/49/0/Air_temperature",
+      "unique_id": "zwave2mqtt_NODE_NAME_temperature",
+      "unit_of_measurement": "°C",
+      "value_template": "{{ value_json.value }}"
+    },
+    "illuminance": {
+      "device_class": "illuminance",
+      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/49/0/Illuminance",
+      "name": "NODE_NAME_illuminance",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/49/0/Illuminance",
+      "unique_id": "zwave2mqtt_NODE_NAME_illuminance",
+      "unit_of_measurement": "lx",
+      "value_template": "{{ value_json.value }}"
+    }
+  }
+}

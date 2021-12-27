@@ -5,13 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Options;
-using MQTTnet.Client.Unsubscribing;
 using MQTTnet.Formatter;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -100,13 +98,14 @@ namespace ZwaveMqttTemplater
 
         private static void DumpFirmwares(Z2MContainer nodes)
         {
-            IOrderedEnumerable<Z2MNode> sorted = nodes.GetAll()
-                .OrderBy(s => s.manufacturerId)
-                .ThenBy(s => s.productId);
+            var sorted = nodes.GetAll()
+                .GroupBy(s => s.manufacturerId + "-" + s.productId + "-" + s.firmwareVersion)
+                .OrderBy(s => s.Key);
 
-            foreach (Z2MNode z2MNode in sorted)
+            foreach (var grp in sorted)
             {
-                Console.WriteLine($"{z2MNode.id}: {z2MNode.productLabel} {z2MNode.productDescription} ({z2MNode.manufacturer})  fw: {z2MNode.firmwareVersion}");
+                var node = grp.First();
+                Console.WriteLine($"{node.productLabel}, {node.productDescription} ({node.manufacturer}) ## {node.firmwareVersion} ## (nodes: {string.Join(", ", grp.Select(x => x.id))})");
             }
         }
 
@@ -193,6 +192,10 @@ namespace ZwaveMqttTemplater
                     return token;
                 });
 
+                // Read device doc
+                doc.Remove("device", out JToken deviceDoc);
+                doc.Remove("availability", out JToken availabilityDoc);
+
                 foreach (JProperty typeProp in doc.Properties())
                 {
                     string type = typeProp.Name;
@@ -203,6 +206,13 @@ namespace ZwaveMqttTemplater
                         string entityName = discoveryDocItem.Key;
                         JToken discoveryDoc = discoveryDocItem.Value;
                         string discoveryTopic = $"{HassPrefix}/{type}/{nodeName}/{entityName}/config";
+
+                        // Add device doc
+                        if (deviceDoc != null)
+                            discoveryDoc["device"] = deviceDoc;
+
+                        if (availabilityDoc != null)
+                            discoveryDoc["availability"] = availabilityDoc;
 
                         store.Set(discoveryTopic, JsonConvert.SerializeObject(discoveryDoc), true);
                     }
@@ -228,7 +238,12 @@ namespace ZwaveMqttTemplater
             HandleHassConfigs("AeotecDoorWindowSensor7", "window_22_1");
             HandleHassConfigs("AeotecDoorWindowSensor7", "door_40_1");
             HandleHassConfigs("AeotecDoorWindowSensor7", "door_40_2");
-            
+
+            HandleHassConfigs("AeotecTrisensor", "sensor_44_3");
+
+            HandleHassConfigs("AeotecAerqSensor", "sensor_40_3");
+            HandleHassConfigs("AeotecAerqSensor", "sensor_50_1");
+
             HandleHassConfigs("SensativeStick", "window_1_2");
             HandleHassConfigs("SensativeStick", "window_1_3");
             HandleHassConfigs("SensativeStick", "window_1_4");
@@ -247,6 +262,7 @@ namespace ZwaveMqttTemplater
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_5");
             HandleHassConfigs("LogicsoftZDB5100", "wallswitch_31");
             HandleHassConfigs("LogicsoftZBA7140", "button_4_4");
+            HandleHassConfigs("LogicsoftZBA7140", "button_3_3");
 
             HandleHassConfigs("NorthQGas9121", "meter_gas");
 

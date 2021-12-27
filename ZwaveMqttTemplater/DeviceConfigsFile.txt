@@ -1,4 +1,14 @@
-﻿### ZDB5100
+﻿## Wakeup
+# 259200 = 3days
+# 604800 = 7days
+product:ZWA008	132-0-wakeUpInterval	259200	# Door/Window Sensor 7
+product:ZW112	132-0-wakeUpInterval	259200	# Door/Window Sensor 6
+product:ZWA005	132-0-wakeUpInterval	259200	# TriSensor
+product:ZWA009	132-0-wakeUpInterval	259200	# Aerq
+product:11-01-011	132-0-wakeUpInterval	259200	# Sensative stick
+product:ZBA7140	132-0-wakeUpInterval	259200	# ZBA7140 wall controller
+
+### ZDB5100
 # Enable dimming
 # 0 No dimming
 # 1 Trailing edge dimming. (Default)
@@ -86,7 +96,6 @@ product:11-01-011	112-0-2	0
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZWA008-C&cert=ZC10-19066568
 # Disable tilt sensor
 product:ZWA008	112-0-14	0
-product:ZWA008	132-0-wakeUpInterval	1209600	# 14 days
 
 ### Aeotec doorbell
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW162-C&cert=ZC10-19046416&type=mini
@@ -131,15 +140,32 @@ product:ZW099 Smart Dimmer 6	112-0-90	1	# Report on change
 product:ZW099 Smart Dimmer 6	112-0-91	25	# Report when N W change
 product:ZW099 Smart Dimmer 6	112-0-92	20	# Report when N% W-change
 
-
 ### ZW175 Smart Switch 7 (Aeotec Limited) 
+# https://devices.zwave-js.io/?jumpTo=0x0371:0x0003:0x00af:0.0
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=AEOEZW175&cert=ZC10-19066544&type=mini
 product:ZW175 Smart Switch 7	112-0-81	0	# Disable LED mode
 
 # Readings frequency
 product:ZW175 Smart Switch 7	112-0-101	7	# Report W, V, kWh
 product:ZW175 Smart Switch 7	112-0-111	600	# Report every Ns
-
 product:ZW175 Smart Switch 7	112-0-91	20	# Report when N W change
 product:ZW175 Smart Switch 7	112-0-92	0	# Report when N kWh change
 product:ZW175 Smart Switch 7	112-0-93	0	# Report when N A change
+
+## ZWA009 aerQ sensor (Aeotec Limited)
+# https://devices.zwave-js.io/?jumpTo=0x0371:0x0002:0x0009:0.0
+product:ZWA009	112-0-1	5	# Report when N x0.1*C change
+product:ZWA009	112-0-2	5	# Report when N % humidity change
+product:ZWA009	112-0-64	1	# Use Celcius
+
+## ZWA005 Trisensor (Aeotec Limited)
+# https://devices.zwave-js.io/?jumpTo=0x0371:0x0002:0x0005:0.0
+product:ZWA005	112-0-11	0	# Disable motion sensor LED
+product:ZWA005	112-0-12	0	# Disable temp sensor LED
+product:ZWA005	112-0-13	0	# Disable light sensor LED
+product:ZWA005	112-0-14	0	# Disable battery report LED
+product:ZWA005	112-0-15	0	# Disable wakeup LED
+product:ZWA005	112-0-21	25	# Report on N x0.1C temp
+product:ZWA005	112-0-22	10000	# Reduce light reporting
+product:ZWA005	112-0-23	32767	# Max temp auto report
+product:ZWA005	112-0-24	32767	# Max light auto report

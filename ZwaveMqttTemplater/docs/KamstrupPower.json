@@ -1,19 +1,19 @@
 ﻿{
   // https://github.com/Claustn/esp8266-kamstrup-mqtt/blob/master/Home_Assistant/sensors.yml
   //
+  "availability": [
+	  {
+		  "topic": "kamstrup/alive",
+		  "payload_available": "connected",
+		  "payload_not_available": "disconnected"
+	  }
+  ],
+  "device": {
+	  "identifiers": [ "kamstrup_power" ],
+	  "name": "Kamstrup Elmåler"
+  },
   "sensor": {
     "kamstrup_activePowerPlus": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activePowerPlus",
       "state_topic": "kamstrup/power/activePowerPlus",
       "name": "Kamstrup activePowerPlus",
@@ -22,17 +22,6 @@
       "state_class": "measurement"
     },
     "kamstrup_activePowerMinus": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activePowerMinus",
       "state_topic": "kamstrup/power/activePowerMinus",
       "name": "Kamstrup activePowerMinus",
@@ -41,17 +30,6 @@
       "state_class": "measurement"
     },
     "kamstrup_activePowerPlusL1": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activePowerPlusL1",
       "state_topic": "kamstrup/power/activePowerPlusL1",
       "name": "Kamstrup activePowerPlusL1",
@@ -60,17 +38,6 @@
       "state_class": "measurement"
     },
     "kamstrup_activePowerMinusL1": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activePowerMinusL1",
       "state_topic": "kamstrup/power/activePowerMinusL1",
       "name": "Kamstrup activePowerMinusL1",
@@ -79,17 +46,6 @@
       "state_class": "measurement"
     },
     "kamstrup_activePowerPlusL2": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activePowerPlusL2",
       "state_topic": "kamstrup/power/activePowerPlusL2",
       "name": "Kamstrup activePowerPlusL2",
@@ -98,17 +54,6 @@
       "state_class": "measurement"
     },
     "kamstrup_activePowerMinusL2": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activePowerMinusL2",
       "state_topic": "kamstrup/power/activePowerMinusL2",
       "name": "Kamstrup activePowerMinusL2",
@@ -117,17 +62,6 @@
       "state_class": "measurement"
     },
     "kamstrup_activePowerPlusL3": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activePowerPlusL3",
       "state_topic": "kamstrup/power/activePowerPlusL3",
       "name": "Kamstrup activePowerPlusL3",
@@ -136,17 +70,6 @@
       "state_class": "measurement"
     },
     "kamstrup_activePowerMinusL3": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activePowerMinusL3",
       "state_topic": "kamstrup/power/activePowerMinusL3",
       "name": "Kamstrup activePowerMinusL3",
@@ -155,17 +78,6 @@
       "state_class": "measurement"
     },
     "kamstrup_reactivePowerPlus": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_reactivePowerPlus",
       "state_topic": "kamstrup/power/reactivePowerPlus",
       "name": "Kamstrup reactivePowerPlus",
@@ -174,17 +86,6 @@
       "state_class": "measurement"
     },
     "kamstrup_reactivePowerMinus": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_reactivePowerMinus",
       "state_topic": "kamstrup/power/reactivePowerMinus",
       "name": "Kamstrup reactivePowerMinus",
@@ -193,17 +94,6 @@
       "state_class": "measurement"
     },
     "kamstrup_powerFactorL1": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_powerFactorL1",
       "state_topic": "kamstrup/power/powerFactorL1",
       "name": "Kamstrup powerFactorL1",
@@ -211,17 +101,6 @@
       "unit_of_measurement": "%"
     },
     "kamstrup_powerFactorL2": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_powerFactorL2",
       "state_topic": "kamstrup/power/powerFactorL2",
       "name": "Kamstrup powerFactorL2",
@@ -229,17 +108,6 @@
       "unit_of_measurement": "%"
     },
     "kamstrup_powerFactorL3": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_powerFactorL3",
       "state_topic": "kamstrup/power/powerFactorL3",
       "name": "Kamstrup powerFactorL3",
@@ -247,17 +115,6 @@
       "unit_of_measurement": "%"
     },
     "kamstrup_powerFactorTotal": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_powerFactorTotal",
       "state_topic": "kamstrup/power/powerFactorTotal",
       "name": "Kamstrup powerFactorTotal",
@@ -265,17 +122,6 @@
       "unit_of_measurement": "%"
     },
     "kamstrup_voltageL1": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_voltageL1",
       "state_topic": "kamstrup/voltage/L1",
       "name": "Kamstrup L1 Voltage",
@@ -283,17 +129,6 @@
       "unit_of_measurement": "v"
     },
     "kamstrup_voltageL2": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_voltageL2",
       "state_topic": "kamstrup/voltage/L2",
       "name": "Kamstrup L2 Voltage",
@@ -301,17 +136,6 @@
       "unit_of_measurement": "v"
     },
     "kamstrup_voltageL3": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_voltageL3",
       "state_topic": "kamstrup/voltage/L3",
       "name": "Kamstrup L3 Voltage",
@@ -319,17 +143,6 @@
       "unit_of_measurement": "v"
     },
     "kamstrup_currentL1": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_currentL1",
       "state_topic": "kamstrup/current/L1",
       "name": "Kamstrup L1 Current",
@@ -337,17 +150,6 @@
       "unit_of_measurement": "A"
     },
     "kamstrup_currentL2": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_currentL2",
       "state_topic": "kamstrup/current/L2",
       "name": "Kamstrup L2 Current",
@@ -355,17 +157,6 @@
       "unit_of_measurement": "A"
     },
     "kamstrup_currentL3": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_currentL3",
       "state_topic": "kamstrup/current/L3",
       "name": "Kamstrup L3 Current",
@@ -373,17 +164,6 @@
       "unit_of_measurement": "A"
     },
     "kamstrup_activeImportKWh": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activeImportKWh",
       "state_topic": "kamstrup/energy/activeImportKWh",
       "name": "Kamstrup activeImportKWh",
@@ -392,17 +172,6 @@
       "state_class": "total"
     },
     "kamstrup_activeExportKWh": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activeExportKWh",
       "state_topic": "kamstrup/energy/activeExportKWh",
       "name": "Kamstrup activeExportKWh",
@@ -411,17 +180,6 @@
       "state_class": "total"
     },
     "kamstrup_activeImportKWhL1": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activeImportKWhL1",
       "state_topic": "kamstrup/energy/activeImportKWhL1",
       "name": "Kamstrup activeImportKWhL1",
@@ -430,17 +188,6 @@
       "state_class": "total"
     },
     "kamstrup_activeExportKWhL1": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activeExportKWhL1",
       "state_topic": "kamstrup/energy/activeExportKWhL1",
       "name": "Kamstrup activeExportKWhL1",
@@ -449,17 +196,6 @@
       "state_class": "total"
     },
     "kamstrup_activeImportKWhL2": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activeImportKWhL2",
       "state_topic": "kamstrup/energy/activeImportKWhL2",
       "name": "Kamstrup activeImportKWhL2",
@@ -468,17 +204,6 @@
       "state_class": "total"
     },
     "kamstrup_activeExportKWhL2": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activeExportKWhL2",
       "state_topic": "kamstrup/energy/activeExportKWhL2",
       "name": "Kamstrup activeExportKWhL2",
@@ -487,17 +212,6 @@
       "state_class": "total"
     },
     "kamstrup_activeImportKWhL3": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activeImportKWhL3",
       "state_topic": "kamstrup/energy/activeImportKWhL3",
       "name": "Kamstrup activeImportKWhL3",
@@ -506,17 +220,6 @@
       "state_class": "total"
     },
     "kamstrup_activeExportKWhL3": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_activeExportKWhL3",
       "state_topic": "kamstrup/energy/activeExportKWhL3",
       "name": "Kamstrup activeExportKWhL3",
@@ -525,17 +228,6 @@
       "state_class": "total"
     },
     "kamstrup_reactiveImportKWh": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_reactiveImportKWh",
       "state_topic": "kamstrup/energy/reactiveImportKWh",
       "name": "Kamstrup reactiveImportKWh",
@@ -544,17 +236,6 @@
       "state_class": "total"
     },
     "kamstrup_reactiveExportKWh": {
-      "availability": [
-        {
-          "topic": "kamstrup/alive",
-          "payload_available": "connected",
-          "payload_not_available": "disconnected"
-        }
-      ],
-      "device": {
-        "identifiers": [ "kamstrup_power" ],
-        "name": "Kamstrup Elmåler"
-      },
       "unique_id": "kamstrup_reactiveExportKWh",
       "state_topic": "kamstrup/energy/reactiveExportKWh",
       "name": "Kamstrup reactiveExportKWh",
