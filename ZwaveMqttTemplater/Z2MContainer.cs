@@ -48,7 +48,7 @@ namespace ZwaveMqttTemplater
 
         public Z2MValue GetValue(int nodeId, string key)
         {
-            var node = _nodes[nodeId];
+            Z2MNode node = _nodes[nodeId];
 
             if (!node.values.TryGetValue(key, out Z2MValue valueSpec))
                 throw new Exception();

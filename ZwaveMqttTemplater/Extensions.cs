@@ -4,9 +4,9 @@ namespace ZwaveMqttTemplater
 {
     static class Extensions
     {
-        public static void Set(this MqttStore store, string topic, string payload, bool retain = false)
+        public static void Set(this MqttStore store, string topic, string payload, bool retain = false, string compareTopic = null)
         {
-            store.Set(topic, Encoding.UTF8.GetBytes(payload), retain);
+            store.Set(topic, Encoding.UTF8.GetBytes(payload), retain, compareTopic);
         }
         
         public static void SetBlindly(this MqttStore store, string topic, string payload)

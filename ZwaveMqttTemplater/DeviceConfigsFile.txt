@@ -1,12 +1,12 @@
 ﻿## Wakeup
 # 259200 = 3days
 # 604800 = 7days
-product:ZWA008	132-0-wakeUpInterval	259200	# Door/Window Sensor 7
-product:ZW112	132-0-wakeUpInterval	259200	# Door/Window Sensor 6
-product:ZWA005	132-0-wakeUpInterval	259200	# TriSensor
-product:ZWA009	132-0-wakeUpInterval	259200	# Aerq
-product:11-01-011	132-0-wakeUpInterval	259200	# Sensative stick
-product:ZBA7140	132-0-wakeUpInterval	259200	# ZBA7140 wall controller
+#product:ZWA008	132-0-wakeUpInterval	259200	# Door/Window Sensor 7
+#product:ZW112	132-0-wakeUpInterval	259200	# Door/Window Sensor 6
+#product:ZWA005	132-0-wakeUpInterval	259200	# TriSensor
+#product:ZWA009	132-0-wakeUpInterval	259200	# Aerq
+#product:11-01-011	132-0-wakeUpInterval	259200	# Sensative stick
+#product:ZBA7140	132-0-wakeUpInterval	259200	# ZBA7140 wall controller
 
 ### ZDB5100
 # Enable dimming
@@ -14,25 +14,61 @@ product:ZBA7140	132-0-wakeUpInterval	259200	# ZBA7140 wall controller
 # 1 Trailing edge dimming. (Default)
 # 2 Leading edge dimming
 product:ZDB5100	112-0-4	1
+name:wallswitch_30_2	112-0-4	0 # Disable dimmer on some switches
+
+# Secure messages
+product:ZDB5100	112-0-15-1	1
+product:ZDB5100	112-0-15-2	1
+product:ZDB5100	112-0-15-4	1
+product:ZDB5100	112-0-15-8	1
+product:ZDB5100	112-0-15-16	1
+product:ZDB5100	112-0-15-32	1
+product:ZDB5100	112-0-15-64	1
+product:ZDB5100	112-0-15-128	1
+product:ZDB5100	112-0-15-256	1
+product:ZDB5100	112-0-15-512	1
+product:ZDB5100	112-0-15-1024	1
+product:ZDB5100	112-0-15-2048	1
+product:ZDB5100	112-0-15-4096	1
 
 # Remove default colors
-product:ZDB5100	112-0-22	0
-product:ZDB5100	112-0-23	0
-product:ZDB5100	112-0-30	0
-product:ZDB5100	112-0-31	0
-product:ZDB5100	112-0-38	0
-product:ZDB5100	112-0-39	0
-product:ZDB5100	112-0-46	0
-product:ZDB5100	112-0-47	0
+product:ZDB5100	112-0-22-255	0
+product:ZDB5100	112-0-22-65280	0
+product:ZDB5100	112-0-22-16711680	0
+product:ZDB5100	112-0-22-4278190080	0
+product:ZDB5100	112-0-23-255	0
+product:ZDB5100	112-0-23-65280	0
+product:ZDB5100	112-0-23-16711680	0
+product:ZDB5100	112-0-23-4278190080	0
+product:ZDB5100	112-0-30-255	0
+product:ZDB5100	112-0-30-65280	0
+product:ZDB5100	112-0-30-16711680	0
+product:ZDB5100	112-0-30-4278190080	0
+product:ZDB5100	112-0-31-255	0
+product:ZDB5100	112-0-31-65280	0
+product:ZDB5100	112-0-31-16711680	0
+product:ZDB5100	112-0-31-4278190080	0
+product:ZDB5100	112-0-38-255	0
+product:ZDB5100	112-0-38-65280	0
+product:ZDB5100	112-0-38-16711680	0
+product:ZDB5100	112-0-38-4278190080	0
+product:ZDB5100	112-0-39-255	0
+product:ZDB5100	112-0-39-65280	0
+product:ZDB5100	112-0-39-16711680	0
+product:ZDB5100	112-0-39-4278190080	0
+product:ZDB5100	112-0-46-255	0
+product:ZDB5100	112-0-46-65280	0
+product:ZDB5100	112-0-46-16711680	0
+product:ZDB5100	112-0-46-4278190080	0
+product:ZDB5100	112-0-47-255	0
+product:ZDB5100	112-0-47-65280	0
+product:ZDB5100	112-0-47-16711680	0
+product:ZDB5100	112-0-47-4278190080	0
 
-# Minimum dimming level
-product:ZDB5100	112-0-5	10
-
-# Dimming over Ns
-product:ZDB5100	112-0-2	2
-
-# On/off takes Ns
-product:ZDB5100	112-0-3	0
+product:ZDB5100	112-0-10	0  # Disable enhanced LED control
+product:ZDB5100	112-0-5	10  # Minimum dimming level
+product:ZDB5100	112-0-2	2 # Dimming over Ns
+product:ZDB5100	112-0-3	0 # On/off takes Ns
 
 # Button 1 controls light
 product:ZDB5100	112-0-1-1	1
@@ -66,48 +102,32 @@ product:ZDB5100	112-0-28	0
 product:ZDB5100	112-0-36	0
 product:ZDB5100	112-0-44	0
 
-# Disable dimmer on some switches
-name:wallswitch_30_2	112-0-4	0
-
-## Enable LED to follow state one some switches
-#name:wallswitch_30_2	112-0-20	1
-#name:wallswitch_30_2	112-0-22	50065152	# static color for ON state
-
 ### Sensative Strips
-# Send Binary Sensor reports
-product:11-01-011	112-0-1	0
-
-# Disable LED
-product:11-01-011	112-0-2	0
+product:11-01-011	112-0-1	0 # Send Binary Sensor reports
+product:11-01-011	112-0-2	0 # Disable LED
 
 # ### Aeotec door window sensor 6
 # # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW112-B&cert=ZC10-16010007
-# # Send 0xFF on open and 0x00 on close
-# product:ZW112	112-0-1	0
-# 
-# # Disable battery
-# product:ZW112	112-0-101	0
-# 
-# # Use Basic Set
-# product:ZW112	112-0-121	1
+# product:ZW112	112-0-1	0 # Send 0xFF on open and 0x00 on close
+# product:ZW112	112-0-101	0 # Disable battery
+# product:ZW112	112-0-121	1 # Use Basic Set
 
 ### Aeotec door window sensor 7
 # http://manual.zwave.eu/backend/make.php?lang=EN&sku=AEOEZWA008&cert=
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZWA008-C&cert=ZC10-19066568
-# Disable tilt sensor
-product:ZWA008	112-0-14	0
+product:ZWA008	112-0-14	0 # Disable tilt sensor
 
 ### Aeotec doorbell
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW162-C&cert=ZC10-19046416&type=mini
 # Sound levels
-product:ZW162 Doorbell 6	121-1-defaultVolume	0
-product:ZW162 Doorbell 6	121-2-defaultVolume	0
-product:ZW162 Doorbell 6	121-3-defaultVolume	25 # Doorbell 1
-product:ZW162 Doorbell 6	121-4-defaultVolume	0
-product:ZW162 Doorbell 6	121-5-defaultVolume	0
-product:ZW162 Doorbell 6	121-6-defaultVolume	0
-product:ZW162 Doorbell 6	121-7-defaultVolume	0
-product:ZW162 Doorbell 6	121-8-defaultVolume	0
+product:ZW162	121-1-defaultVolume	0
+product:ZW162	121-2-defaultVolume	0
+product:ZW162	121-3-defaultVolume	25 # Doorbell 1
+product:ZW162	121-4-defaultVolume	0
+product:ZW162	121-5-defaultVolume	0
+product:ZW162	121-6-defaultVolume	0
+product:ZW162	121-7-defaultVolume	0
+product:ZW162	121-8-defaultVolume	0
 
 # Ding dong chime
 product:ZW162 Doorbell 6	121-3-defaultToneId	1
@@ -115,42 +135,44 @@ product:ZW162 Doorbell 6	121-3-defaultToneId	1
 ### Aeotec indoor siren
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW164-A&cert=ZC10-19046417&type=mini
 # Sound levels
-product:ZW164 Indoor Siren 6	121-1-defaultVolume	0
-product:ZW164 Indoor Siren 6	121-2-defaultVolume	0
-product:ZW164 Indoor Siren 6	121-3-defaultVolume	0
-product:ZW164 Indoor Siren 6	121-4-defaultVolume	25 # Doorbell 2 (for some reason, doorbell 1 is aka. "Tampering")
-product:ZW164 Indoor Siren 6	121-5-defaultVolume	0
-product:ZW164 Indoor Siren 6	121-6-defaultVolume	0
-product:ZW164 Indoor Siren 6	121-7-defaultVolume	0
-product:ZW164 Indoor Siren 6	121-8-defaultVolume	0
-product:ZW164 Indoor Siren 6	121-9-defaultVolume	0
+product:ZW164	121-1-defaultVolume	0
+product:ZW164	121-2-defaultVolume	0
+product:ZW164	121-3-defaultVolume	0
+product:ZW164	121-4-defaultVolume	25 # Doorbell 2 (for some reason, doorbell 1 is aka. "Tampering")
+product:ZW164	121-5-defaultVolume	0
+product:ZW164	121-6-defaultVolume	0
+product:ZW164	121-7-defaultVolume	0
+product:ZW164	121-8-defaultVolume	0
 
 # Ding dong chime
-product:ZW164 Indoor Siren 6	121-4-defaultToneId	1
+product:ZW164	121-4-defaultToneId	1
 
 ### ZW099 Smart Dimmer 6 (AEON Labs) 
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=ZW099-A02&cert=ZC10-17035455
-product:ZW099 Smart Dimmer 6	112-0-81	0	# Disable LED mode
+product:ZW099	112-0-81	0	# Disable LED mode
 
 # Readings frequency
-product:ZW099 Smart Dimmer 6	112-0-101	7	# Report W, V, kWh
-product:ZW099 Smart Dimmer 6	112-0-111	600	# Report every Ns
+product:ZW099 112-0-101	7	# Report W, V, kWh
+product:ZW099 112-0-111	600	# Report every Ns
 
-product:ZW099 Smart Dimmer 6	112-0-90	1	# Report on change
-product:ZW099 Smart Dimmer 6	112-0-91	25	# Report when N W change
-product:ZW099 Smart Dimmer 6	112-0-92	20	# Report when N% W-change
+product:ZW099	112-0-90	1	# Report on change
+product:ZW099	112-0-91	25	# Report when N W change
+product:ZW099	112-0-92	20	# Report when N% W-change
 
 ### ZW175 Smart Switch 7 (Aeotec Limited) 
 # https://devices.zwave-js.io/?jumpTo=0x0371:0x0003:0x00af:0.0
 # http://manuals-backend.z-wave.info/make.php?lang=en&sku=AEOEZW175&cert=ZC10-19066544&type=mini
-product:ZW175 Smart Switch 7	112-0-81	0	# Disable LED mode
+product:ZW175	112-0-81	0	# Disable LED mode
 
 # Readings frequency
-product:ZW175 Smart Switch 7	112-0-101	7	# Report W, V, kWh
-product:ZW175 Smart Switch 7	112-0-111	600	# Report every Ns
-product:ZW175 Smart Switch 7	112-0-91	20	# Report when N W change
-product:ZW175 Smart Switch 7	112-0-92	0	# Report when N kWh change
-product:ZW175 Smart Switch 7	112-0-93	0	# Report when N A change
+product:ZW175 112-0-101-1	1	# Report W
+product:ZW175 112-0-101-2	1	# Report V
+product:ZW175 112-0-101-4	1	# Report kWh
+product:ZW175 112-0-101-8	0	# Do not report A
+product:ZW175	112-0-111	600	# Report every Ns
+product:ZW175	112-0-91	20	# Report when N W change
+product:ZW175	112-0-92	0	# Report when N kWh change
+product:ZW175	112-0-93	0	# Report when N A change
 
 ## ZWA009 aerQ sensor (Aeotec Limited)
 # https://devices.zwave-js.io/?jumpTo=0x0371:0x0002:0x0009:0.0

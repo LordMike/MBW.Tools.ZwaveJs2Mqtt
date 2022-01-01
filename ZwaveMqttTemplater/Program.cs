@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,8 +9,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
-using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Options;
+using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Formatter;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -23,28 +24,43 @@ namespace ZwaveMqttTemplater
 
         static async Task Main(string[] args)
         {
-            IMqttClient mqttClient = new MqttFactory()
-                .CreateMqttClient();
-
-            IMqttClientOptions mqttOptions = new MqttClientOptionsBuilder()
-                .WithTcpServer("queue.home")
-                .WithCredentials("mqtt_speccer", (string)null)
-                .WithCleanSession()
-                .WithProtocolVersion(MqttProtocolVersion.V500)
+            ManagedMqttClientOptions options = new ManagedMqttClientOptionsBuilder()
+                .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
+                .WithClientOptions(new MqttClientOptionsBuilder()
+                    .WithClientId("mqtt_speccer")
+                    .WithTcpServer("queue.home")
+                    .WithCleanSession()
+                    .WithProtocolVersion(MqttProtocolVersion.V500)
+                    .Build())
                 .Build();
 
-            await mqttClient.ConnectAsync(mqttOptions, default);
+            IManagedMqttClient mqttClient = new MqttFactory().CreateManagedMqttClient();
+            await mqttClient.StartAsync(options);
 
             MqttStore store = new MqttStore(mqttClient);
-
             await store.Load("homeassistant/#", "zwave2mqtt/#", "zwavejs2mqtt/#");
+
+            Z2MApiClient z2mApi = new Z2MApiClient(mqttClient);
+            await z2mApi.Start();
 
             try
             {
-                Z2MContainer nodes = await GetNodes(mqttClient);
+                Z2MContainer nodes = new Z2MContainer(await z2mApi.GetNodes());
 
-                //DumpConfigs(nodes);
+                //await PingNodes(z2mApi, nodes.GetByProduct("ZDB5100"));
+                //await HealNodes(z2mApi, nodes.GetByProduct("ZDB5100"));
+
+                //foreach (var node in nodes.GetByProduct("ZDB5100"))
+                ////foreach (var node in nodes.GetByName("wallswitch_2"))
+                //{
+                //    await z2mApi.RefreshCCValues(node.id, 37);
+                //    await z2mApi.RefreshCCValues(node.id, 38);
+                //}
+
+                //await DumpConfigs(z2mApi, nodes.GetByProduct("ZDB5100"), false);
                 //DumpFirmwares(nodes);
+
+                //return;
 
                 //await HandleAssociationsConfig(mqttClient, store, nodes);
                 await HandleHassConfigs(store);
@@ -57,7 +73,7 @@ namespace ZwaveMqttTemplater
                     Console.WriteLine("Sending to:");
 
                     foreach (string topic in topics)
-                        Console.WriteLine("> " + topic);
+                        Console.WriteLine($"> {topic}: {store.GetCurrentValue(topic)} => {store.GetSetValue(topic)}");
 
                     Console.WriteLine("Ok?");
                     Console.ReadLine();
@@ -71,40 +87,70 @@ namespace ZwaveMqttTemplater
             }
             finally
             {
-                await mqttClient.DisconnectAsync(new MqttClientDisconnectOptions { ReasonCode = MqttClientDisconnectReason.NormalDisconnection, ReasonString = "Shutting down" });
+                await mqttClient.StopAsync();
             }
         }
 
-        private static void DumpConfigs(Z2MContainer nodes)
+        private static async Task HealNodes(Z2MApiClient z2mApi, IEnumerable<Z2MNode> nodes)
         {
-            IEnumerable<Z2MNode> toList = nodes.GetAll();
-
-            foreach (Z2MNode z2MNode in toList)
+            foreach (var node in nodes)
             {
-                Console.WriteLine($"{z2MNode.id}: {z2MNode.productLabel} {z2MNode.productDescription} ({z2MNode.manufacturer})");
-                Console.WriteLine($"  Name: {z2MNode.name}   fw: {z2MNode.firmwareVersion}");
+                Console.WriteLine("Healing " + node.id + " - " + node.name);
+                await z2mApi.HealNode(node.id);
+            }
+        }
+
+        private static async Task PingNodes(Z2MApiClient z2mApi, IEnumerable<Z2MNode> nodes)
+        {
+            Stopwatch sw = new Stopwatch();
+            foreach (var node in nodes)
+            {
+                sw.Restart();
+                await z2mApi.PingNode(node.id);
+                sw.Stop();
+
+                Console.WriteLine($"Ping {node.id} - {node.name} - {sw.ElapsedMilliseconds:N0}ms");
+            }
+        }
+
+        private static async Task DumpConfigs(Z2MApiClient z2mApi, IEnumerable<Z2MNode> nodes, bool refresh)
+        {
+            if (refresh)
+            {
+                foreach (var node in nodes)
+                {
+                    Console.WriteLine("Refreshing " + node);
+                    await z2mApi.RefreshCCValues(node.id, 112);
+                }
+            }
+
+            var newDump = await z2mApi.GetNodes();
+
+            foreach (Z2MNode node in nodes)
+            {
+                var z2MNode = newDump.Single(s => s.id == node.id);
+
+                var prefix = $"{z2MNode.id}\t{z2MNode.name}\t{z2MNode.loc}\t{z2MNode.productLabel} {z2MNode.productDescription}\t{z2MNode.firmwareVersion}";
 
                 foreach ((string key, Z2MValue value) in z2MNode.values)
                 {
                     if (value.commandClass != 112)
                         continue;
 
-                    Console.WriteLine($"  {key}: {value.value}  ({value.label})");
+                    Console.WriteLine($"{prefix}\t{key}\t{value.value}\t{value.label}");
                 }
-
-                Console.WriteLine();
             }
         }
 
         private static void DumpFirmwares(Z2MContainer nodes)
         {
-            var sorted = nodes.GetAll()
+            IOrderedEnumerable<IGrouping<string, Z2MNode>> sorted = nodes.GetAll()
                 .GroupBy(s => s.manufacturerId + "-" + s.productId + "-" + s.firmwareVersion)
                 .OrderBy(s => s.Key);
 
-            foreach (var grp in sorted)
+            foreach (IGrouping<string, Z2MNode> grp in sorted)
             {
-                var node = grp.First();
+                Z2MNode node = grp.First();
                 Console.WriteLine($"{node.productLabel}, {node.productDescription} ({node.manufacturer}) ## {node.firmwareVersion} ## (nodes: {string.Join(", ", grp.Select(x => x.id))})");
             }
         }
@@ -277,8 +323,8 @@ namespace ZwaveMqttTemplater
             List<Z2MNode> nodes = new List<Z2MNode>();
 
             // Apply all configs in order to get final setup
-            // product:ZDB5100 Matrix	1-31-2[0x33]	0
-            Regex lineParser = new Regex(@"^(?<type>\w+):(?<filter>[\w\s\d\-]+)\t(?<key>[^\t]+)\t(?<value>[^#\n]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            // product:ZDB5100	1-31-2-0	0
+            Regex lineParser = new Regex(@"^(?<type>\w+):(?<filter>[\w\s\d\-]+)\t(?<key>[^\t]+)\t(?<value>[^#\n\t ]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             Dictionary<ValueKey, object> desiredValues = new Dictionary<ValueKey, object>();
 
             foreach (string configLine in configLines)
@@ -309,14 +355,21 @@ namespace ZwaveMqttTemplater
 
                 // Set values
                 string valueKey = match.Groups["key"].Value;
+                bool noMatches = nodes.Any();
 
                 foreach (Z2MNode z2MNode in nodes)
                 {
                     if (!z2MNode.values.TryGetValue(valueKey, out Z2MValue value))
                         continue;
 
+                    noMatches = false;
                     object newVal = ConvertZ2MValue(value, match.Groups["value"].Value);
                     desiredValues[new ValueKey(z2MNode.id, valueKey)] = newVal;
+                }
+
+                if (noMatches)
+                {
+                    Console.WriteLine("WARNING unable to match '" + match.Value + "'");
                 }
             }
 
@@ -335,8 +388,9 @@ namespace ZwaveMqttTemplater
                 // > zwavejs2mqtt/wallswitch_4/112/0/2
                 // DATA
 
-                string topic = $"zwavejs2mqtt/{node.name}/{key.Key.Replace('-', '/')}/set";
-                store.Set(topic, JsonConvert.SerializeObject(value));
+                string topic = $"zwavejs2mqtt/{node.name}/{key.Key.Replace('-', '/')}";
+                string setTopic = $"{topic}/set";
+                store.Set(setTopic, JsonConvert.SerializeObject(value), compareTopic: topic);
             }
         }
 

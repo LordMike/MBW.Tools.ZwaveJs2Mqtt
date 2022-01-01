@@ -17,7 +17,7 @@ namespace ZwaveMqttTemplater
         {
             string prefix = $"zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/{method}";
             string setCmd = $"{prefix}/set";
-            var argsJarray = args == null ? null : JArray.FromObject(args);
+            JArray argsJarray = args == null ? null : JArray.FromObject(args);
 
             ManualResetEvent stopEvent = new ManualResetEvent(false);
             await using Timer timer = new Timer(state => stopEvent.Set());
@@ -33,7 +33,7 @@ namespace ZwaveMqttTemplater
                 string str = eventArgs.ApplicationMessage.ConvertPayloadToString();
                 str = JsonConvert.DeserializeObject<JToken>(str).ToString(Formatting.Indented);
 
-                var tmpResult = JsonConvert.DeserializeObject<Z2MApiCallResult<T>>(str);
+                Z2MApiCallResult<T> tmpResult = JsonConvert.DeserializeObject<Z2MApiCallResult<T>>(str);
 
                 // Ensure args match
                 if (argsJarray != null)
@@ -59,7 +59,7 @@ namespace ZwaveMqttTemplater
                 new TopicFilter { Topic = prefix }
             );
 
-            var argsBytes = argsJarray == null
+            byte[] argsBytes = argsJarray == null
                 ? Array.Empty<byte>()
                 : Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { args = argsJarray }));
             await client.PublishAsync(setCmd, argsBytes); // request new doc

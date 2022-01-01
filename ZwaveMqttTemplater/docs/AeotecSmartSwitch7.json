@@ -1,10 +1,10 @@
 ﻿{
-	"device": {
-		"identifiers": [ "zwave2mqtt_NODE_NAME" ],
-		"manufacturer": "Aeotec Limited",
-		"model": "ZW175 Smart Switch 7 (0x00af)",
-		"name": "NODE_NAME"
-	},
+  "device": {
+    "identifiers": [ "zwave2mqtt_NODE_NAME" ],
+    "manufacturer": "Aeotec Limited",
+    "model": "ZW175 Smart Switch 7 (0x00af)",
+    "name": "NODE_NAME"
+  },
   "switch": {
     "onoff": {
       "command_topic": "zwavejs2mqtt/NODE_NAME/37/0/targetValue/set",
@@ -23,7 +23,7 @@
       "rgb_command_template": "{{ \"#%02x%02x%02x\" | format(red, green, blue)}}",
       "rgb_command_topic": "zwavejs2mqtt/NODE_NAME/51/0/targetColor/set",
       "rgb_state_topic": "zwavejs2mqtt/NODE_NAME/51/0/currentColor",
-      "rgb_value_template": "{{ value_json.value[1:3] | int(0, 16) }},{{ value_json.value[3:5] | int(0, 16) }},{{ value_json.value[5:7] | int(0, 16) }}",
+      "rgb_value_template": "{{ value_json.value.red if 'red' in value_json.value else 0 }},{{ value_json.value.green if 'green' in value_json.value else 0 }},{{ value_json.value.blue if 'blue' in value_json.value else 0 }}",
       "state_topic": "zwavejs2mqtt/NODE_NAME/51/0/currentColor",
       "state_value_template": "{{ \"OFF\" if value_json.value == '#000000' else \"ON\" }}",
       "unique_id": "zwave2mqtt_NODE_NAME_rgb"

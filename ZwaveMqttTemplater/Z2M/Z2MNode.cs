@@ -34,5 +34,10 @@ namespace ZwaveMqttTemplater.Z2M
         public string productDescription { get; set; }
         public int zwaveVersion { get; set; }
         public Deviceclass deviceClass { get; set; }
+
+        public override string ToString()
+        {
+            return $"Node {id} {name} ({loc})";
+        }
     }
 }
