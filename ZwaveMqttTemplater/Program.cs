@@ -1,538 +1,176 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿#nullable enable
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MQTTnet;
-using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Formatter;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
+using ZwaveMqttTemplater.Commands;
+using ZwaveMqttTemplater.Commands.Generic;
+using ZwaveMqttTemplater.CommandSystem;
+using ZwaveMqttTemplater.Helpers;
+using ZwaveMqttTemplater.Mqtt;
 using ZwaveMqttTemplater.Z2M;
+using ILogger = Serilog.ILogger;
 
-namespace ZwaveMqttTemplater
+namespace ZwaveMqttTemplater;
+
+internal class Program
 {
-    class Program
+    private static async Task<int> Main(string[] args)
     {
-        private const string HassPrefix = "homeassistant";
+        CommandLineHelper<CommandBase> cmdLineHelper = new(typeof(RootCommand));
 
-        static async Task Main(string[] args)
+        Type[] types = Assembly.GetExecutingAssembly().GetTypes();
+        foreach (Type type in types
+                     .Where(s => s.IsSubclassOf(typeof(CommandBase)))
+                     .Where(s => s.IsClass && !s.IsAbstract)
+                     .Where(s => s != typeof(RootCommand)))
         {
-            ManagedMqttClientOptions options = new ManagedMqttClientOptionsBuilder()
-                .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
-                .WithClientOptions(new MqttClientOptionsBuilder()
-                    .WithClientId("mqtt_speccer")
-                    .WithTcpServer("queue.home")
-                    .WithCleanSession()
-                    .WithProtocolVersion(MqttProtocolVersion.V500)
-                    .Build())
-                .Build();
-
-            IManagedMqttClient mqttClient = new MqttFactory().CreateManagedMqttClient();
-            await mqttClient.StartAsync(options);
-
-            MqttStore store = new MqttStore(mqttClient);
-            await store.Load("homeassistant/#", "zwave2mqtt/#", "zwavejs2mqtt/#");
-
-            Z2MApiClient z2mApi = new Z2MApiClient(mqttClient);
-            await z2mApi.Start();
-
-            try
-            {
-                Z2MContainer nodes = new Z2MContainer(await z2mApi.GetNodes());
-
-                //await PingNodes(z2mApi, nodes.GetByProduct("ZDB5100"));
-                //await HealNodes(z2mApi, nodes.GetByProduct("ZDB5100"));
-
-                //foreach (var node in nodes.GetByProduct("ZDB5100"))
-                ////foreach (var node in nodes.GetByName("wallswitch_2"))
-                //{
-                //    await z2mApi.RefreshCCValues(node.id, 37);
-                //    await z2mApi.RefreshCCValues(node.id, 38);
-                //}
-
-                //await DumpConfigs(z2mApi, nodes.GetByProduct("ZDB5100"), false);
-                //DumpFirmwares(nodes);
-
-                //return;
-
-                //await HandleAssociationsConfig(mqttClient, store, nodes);
-                await HandleHassConfigs(store);
-                await HandleDeviceConfigs(store, nodes);
-
-                List<string> topics = store.GetTopicsToSet().ToList();
-
-                if (topics.Any())
-                {
-                    Console.WriteLine("Sending to:");
-
-                    foreach (string topic in topics)
-                        Console.WriteLine($"> {topic}: {store.GetCurrentValue(topic)} => {store.GetSetValue(topic)}");
-
-                    Console.WriteLine("Ok?");
-                    Console.ReadLine();
-
-                    await store.FlushTopicsToSet();
-                }
-                else
-                {
-                    Console.WriteLine("No topics to set");
-                }
-            }
-            finally
-            {
-                await mqttClient.StopAsync();
-            }
+            cmdLineHelper.AddType(type);
         }
 
-        private static async Task HealNodes(Z2MApiClient z2mApi, IEnumerable<Z2MNode> nodes)
+        if (!cmdLineHelper.TryParse(args, out IList<string>? errors, out Type? commandType, out Dictionary<string, string>? cmdlineValues))
         {
-            foreach (var node in nodes)
-            {
-                Console.WriteLine("Healing " + node.id + " - " + node.name);
-                await z2mApi.HealNode(node.id);
-            }
+            await Console.Error.WriteLineAsync("Unable to parse commandline, use --help to get details");
+
+            foreach (string error in errors)
+                await Console.Error.WriteLineAsync(error);
+
+            return 1;
         }
 
-        private static async Task PingNodes(Z2MApiClient z2mApi, IEnumerable<Z2MNode> nodes)
+        if (cmdlineValues.IsHelpRequested())
         {
-            Stopwatch sw = new Stopwatch();
-            foreach (var node in nodes)
-            {
-                sw.Restart();
-                await z2mApi.PingNode(node.id);
-                sw.Stop();
-
-                Console.WriteLine($"Ping {node.id} - {node.name} - {sw.ElapsedMilliseconds:N0}ms");
-            }
+            cmdLineHelper.PrintHelp(Console.Out, commandType);
+            return 2;
         }
 
-        private static async Task DumpConfigs(Z2MApiClient z2mApi, IEnumerable<Z2MNode> nodes, bool refresh)
-        {
-            if (refresh)
+        LoggingLevelSwitch logLevel = new();
+        LoggingLevelSwitch logLevelPlusOne = new(LogEventLevel.Warning);
+
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .Enrich.With<ReduceSourceContextValue>()
+            .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContextShort}] {Message:lj}{NewLine}{Exception}")
+            .MinimumLevel.ControlledBy(logLevel)
+            .MinimumLevel.Override("MQTTnet", logLevelPlusOne)
+            .CreateLogger();
+
+        using IHost host = new HostBuilder()
+            .ConfigureAppConfiguration(builder =>
             {
-                foreach (var node in nodes)
-                {
-                    Console.WriteLine("Refreshing " + node);
-                    await z2mApi.RefreshCCValues(node.id, 112);
-                }
-            }
-
-            var newDump = await z2mApi.GetNodes();
-
-            foreach (Z2MNode node in nodes)
+                builder.AddEnvironmentVariables()
+                    .AddInMemoryCollection(cmdlineValues);
+            })
+            .ConfigureLogging((context, builder) =>
             {
-                var z2MNode = newDump.Single(s => s.id == node.id);
+                RootCommand.Options? options = context.Configuration.Get<RootCommand.Options>();
+                logLevel.MinimumLevel = options.LogLevel;
 
-                var prefix = $"{z2MNode.id}\t{z2MNode.name}\t{z2MNode.loc}\t{z2MNode.productLabel} {z2MNode.productDescription}\t{z2MNode.firmwareVersion}";
+                // Keep some logs at a persistent higher filter
+                logLevelPlusOne.MinimumLevel = (LogEventLevel)Math.Clamp((int)(options.LogLevel + 1),
+                    (int)LogEventLevel.Verbose, (int)LogEventLevel.Fatal);
 
-                foreach ((string key, Z2MValue value) in z2MNode.values)
-                {
-                    if (value.commandClass != 112)
-                        continue;
-
-                    Console.WriteLine($"{prefix}\t{key}\t{value.value}\t{value.label}");
-                }
-            }
-        }
-
-        private static void DumpFirmwares(Z2MContainer nodes)
-        {
-            IOrderedEnumerable<IGrouping<string, Z2MNode>> sorted = nodes.GetAll()
-                .GroupBy(s => s.manufacturerId + "-" + s.productId + "-" + s.firmwareVersion)
-                .OrderBy(s => s.Key);
-
-            foreach (IGrouping<string, Z2MNode> grp in sorted)
+                builder.AddSerilog();
+            })
+            .ConfigureServices((context, services) =>
             {
-                Z2MNode node = grp.First();
-                Console.WriteLine($"{node.productLabel}, {node.productDescription} ({node.manufacturer}) ## {node.firmwareVersion} ## (nodes: {string.Join(", ", grp.Select(x => x.id))})");
-            }
-        }
+                cmdLineHelper.ConfigureServices(services, context.Configuration);
 
-        private static async Task<Z2MContainer> GetNodes(IMqttClient mqttClient)
-        {
-            Z2MApiCallResult<List<Z2MNode>> res = await Z2MHelpers.CallZwavejsApi<List<Z2MNode>>(mqttClient, "getNodes");
+                services.AddSingleton(cmdLineHelper);
+                services.AddSingleton(typeof(IValidateOptions<>), typeof(DataAnnotationValidateOptions<>));
 
-            return new Z2MContainer(res.Result);
-        }
-
-        private static async Task<Z2mAssociation[]> GetAssociations(IMqttClient mqttClient, int node, int group)
-        {
-            Z2MApiCallResult<Z2mAssociation[]> res = await Z2MHelpers.CallZwavejsApi<Z2mAssociation[]>(mqttClient, "getAssociations", new object[] { node, group });
-
-            return res.Result;
-        }
-
-        private static async Task HandleAssociationsConfig(IMqttClient client, MqttStore store, Z2MContainer nodes)
-        {
-            DesiredAssociationsContainer desired = JsonConvert.DeserializeObject<DesiredAssociationsContainer>(File.ReadAllText("AssociationsConfig.json"));
-
-            foreach ((string key, DesiredAssociations value) in desired.Nodes)
-            {
-                Z2MNode node = nodes.GetByName(key).Single();
-
-                foreach (Z2MGroup z2MGroup in node.groups)
-                {
-                    int groupId = z2MGroup.value;
-                    List<Z2mAssociation> desiredLinks = value.GetLinks(nodes, groupId).ToList();
-
-                    Z2mAssociation[] existing = await GetAssociations(client, node.id, groupId);
-
-                    List<Z2mAssociation> toRemove = existing.Where(s => desiredLinks.All(x => s != x)).ToList();
-                    List<Z2mAssociation> toAdd = desiredLinks.Where(s => existing.All(x => s != x)).ToList();
-
-                    foreach (Z2mAssociation item in toRemove)
+                services
+                    .AddSingleton<IManagedMqttClientOptions>(_ =>
                     {
-                        Z2MNode otherNode = nodes.GetNode(item.NodeId);
-                        Console.WriteLine($"Node {node.id} {node.name}, remove group {groupId} ({z2MGroup.text}) => {item.NodeId}.{item.Endpoint} ({otherNode.name})");
-                    }
+                        RootCommand.Options option = _.GetRequiredService<RootCommand.Options>();
 
-                    if (toRemove.Any())
-                        store.SetBlindly("zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/removeAssociations/set", JsonConvert.SerializeObject(new
+                        return new ManagedMqttClientOptionsBuilder()
+                            .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
+                            .WithClientOptions(new MqttClientOptionsBuilder()
+                                .WithClientId("mqtt_speccer")
+                                .WithTcpServer(option.MqttHost, option.MqttPort)
+                                .WithCleanSession()
+                                .WithProtocolVersion(MqttProtocolVersion.V500)
+                                .Build())
+                            .Build();
+                    })
+                    .AddSingleton(provider =>
+                    {
+                        IHostApplicationLifetime hostLifetime = provider.GetRequiredService<IHostApplicationLifetime>();
+                        ILogger<ManagedMqttClient> logger = provider.GetRequiredService<ILogger<ManagedMqttClient>>();
+                        MqttLogging mqttLogger = new(logger);
+
+                        IManagedMqttClient mqttClient = new MqttFactory(mqttLogger).CreateManagedMqttClient();
+
+                        hostLifetime.ApplicationStopping.Register(() =>
                         {
-                            args = new object[]
-                            {
-                            node.id, groupId, toRemove
-                            }
-                        }));
-
-                    foreach (Z2mAssociation item in toAdd)
-                    {
-                        Z2MNode otherNode = nodes.GetNode(item.NodeId);
-                        Console.WriteLine($"Node {node.id} {node.name}, add group {groupId} ({z2MGroup.text}) => {item.NodeId}.{item.Endpoint} ({otherNode.name})");
-                    }
-
-                    if (toAdd.Any())
-                        store.SetBlindly("zwavejs2mqtt/_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/addAssociations/set", JsonConvert.SerializeObject(new
+                            mqttClient.StopAsync();
+                        });
+                        mqttClient.UseConnectedHandler(eventArgs =>
                         {
-                            args = new object[]
+                            logger.LogDebug("MQTT Connected {ResultCode}", eventArgs.ConnectResult.ResultCode);
+                        });
+                        mqttClient.UseDisconnectedHandler(eventArgs =>
+                        {
+                            logger.LogWarning("MQTT Disconnected reason: {Reason}", eventArgs.Reason);
+
+                            if (!eventArgs.ClientWasConnected)
                             {
-                            node.id, groupId, toAdd
+                                // Client was never connected, so stop the app
+                                hostLifetime.StopApplication();
                             }
-                        }));
+                        });
 
-                    //if (toAdd.Any() || toRemove.Any())
-                    //    return;
-                }
-            }
-        }
-
-        private static async Task HandleHassConfigs(MqttStore store)
-        {
-            void HandleHassConfigs(string product, string nodeName)
-            {
-                JObject doc = ReadDoc("docs", product);
-
-                // Replace
-                doc = (JObject)Transform(doc, token =>
-                {
-                    if (token.Type == JTokenType.String)
-                        return JToken.FromObject(token.Value<string>().Replace("NODE_NAME", nodeName));
-
-                    return token;
-                });
-
-                // Read device doc
-                doc.Remove("device", out JToken deviceDoc);
-                doc.Remove("availability", out JToken availabilityDoc);
-
-                foreach (JProperty typeProp in doc.Properties())
-                {
-                    string type = typeProp.Name;
-                    JObject discoveryDocs = (JObject)typeProp.Value;
-
-                    foreach (KeyValuePair<string, JToken> discoveryDocItem in discoveryDocs)
+                        return mqttClient;
+                    })
+                    .AddSingleton<MqttStore>()
+                    .AddSingleton<Z2MApiClient>(provider =>
                     {
-                        string entityName = discoveryDocItem.Key;
-                        JToken discoveryDoc = discoveryDocItem.Value;
-                        string discoveryTopic = $"{HassPrefix}/{type}/{nodeName}/{entityName}/config";
+                        IHostApplicationLifetime hostLifetime = provider.GetRequiredService<IHostApplicationLifetime>();
+                        Z2MApiClient instance = ActivatorUtilities.CreateInstance<Z2MApiClient>(provider, hostLifetime.ApplicationStopping);
 
-                        // Add device doc
-                        if (deviceDoc != null)
-                            discoveryDoc["device"] = deviceDoc;
+                        return instance;
+                    });
+            })
+            .Build();
 
-                        if (availabilityDoc != null)
-                            discoveryDoc["availability"] = availabilityDoc;
-
-                        store.Set(discoveryTopic, JsonConvert.SerializeObject(discoveryDoc), true);
-                    }
-                }
-            }
-
-            HandleHassConfigs("AeotecSmartSwitch7", "powerplug_1");
-            HandleHassConfigs("AeotecSmartSwitch7", "powerplug_2");
-            HandleHassConfigs("AeotecSmartDimmer6", "powerplug_3");
-
-            //HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "door_1_1");
-            //HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_20_2");
-            //HandleHassConfigs("AeotecDoorWindowSensor6_alarmkind", "window_21_2");
-
-            HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_1_1");
-            HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "window_20_2");
-            HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "window_21_2");
-            HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_30_1");
-            HandleHassConfigs("AeotecDoorWindowSensor6_basicsetkind", "door_4_2");
-
-            HandleHassConfigs("AeotecDoorWindowSensor7", "window_2_2");
-            HandleHassConfigs("AeotecDoorWindowSensor7", "window_3_2");
-            HandleHassConfigs("AeotecDoorWindowSensor7", "window_22_1");
-            HandleHassConfigs("AeotecDoorWindowSensor7", "door_40_1");
-            HandleHassConfigs("AeotecDoorWindowSensor7", "door_40_2");
-
-            HandleHassConfigs("AeotecTrisensor", "sensor_44_3");
-
-            HandleHassConfigs("AeotecAerqSensor", "sensor_40_3");
-            HandleHassConfigs("AeotecAerqSensor", "sensor_50_1");
-
-            HandleHassConfigs("SensativeStick", "window_1_2");
-            HandleHassConfigs("SensativeStick", "window_1_3");
-            HandleHassConfigs("SensativeStick", "window_1_4");
-            HandleHassConfigs("SensativeStick", "window_4_3");
-            HandleHassConfigs("SensativeStick", "window_5_2");
-
-            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_2");
-            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_1");
-            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_30_1");
-            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_30_2");
-            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_20");
-            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_21");
-            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_22");
-            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_3");
-            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_4");
-            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_5");
-            HandleHassConfigs("LogicsoftZDB5100", "wallswitch_31");
-            HandleHassConfigs("LogicsoftZBA7140", "button_4_4");
-            HandleHassConfigs("LogicsoftZBA7140", "button_3_3");
-
-            HandleHassConfigs("NorthQGas9121", "meter_gas");
-
-            HandleHassConfigs("VaillantEcotecEbus", "EcoTECBoiler");
-            HandleHassConfigs("KamstrupPower", "KamstrupPower");
-        }
-
-        private static async Task HandleDeviceConfigs(MqttStore store, Z2MContainer z2MContainer)
+        CommandBase command;
+        try
         {
-            string[] configLines = await File.ReadAllLinesAsync("DeviceConfigsFile.txt");
-
-            List<Z2MNode> nodes = new List<Z2MNode>();
-
-            // Apply all configs in order to get final setup
-            // product:ZDB5100	1-31-2-0	0
-            Regex lineParser = new Regex(@"^(?<type>\w+):(?<filter>[\w\s\d\-]+)\t(?<key>[^\t]+)\t(?<value>[^#\n\t ]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            Dictionary<ValueKey, object> desiredValues = new Dictionary<ValueKey, object>();
-
-            foreach (string configLine in configLines)
-            {
-                Match match = lineParser.Match(configLine);
-                if (!match.Success)
-                    continue;
-
-                nodes.Clear();
-
-                switch (match.Groups["type"].Value)
-                {
-                    case "name":
-                        nodes.AddRange(z2MContainer.GetByNameFilter(match.Groups["filter"].Value));
-                        break;
-                    case "product":
-                        nodes.AddRange(z2MContainer.GetByProduct(match.Groups["filter"].Value));
-                        break;
-                    case "manufacturer":
-                        nodes.AddRange(z2MContainer.GetByManufacturer(match.Groups["filter"].Value));
-                        break;
-                    case "id":
-                        nodes.AddRange(z2MContainer.GetById(match.Groups["filter"].Value));
-                        break;
-                    default:
-                        throw new Exception();
-                }
-
-                // Set values
-                string valueKey = match.Groups["key"].Value;
-                bool noMatches = nodes.Any();
-
-                foreach (Z2MNode z2MNode in nodes)
-                {
-                    if (!z2MNode.values.TryGetValue(valueKey, out Z2MValue value))
-                        continue;
-
-                    noMatches = false;
-                    object newVal = ConvertZ2MValue(value, match.Groups["value"].Value);
-                    desiredValues[new ValueKey(z2MNode.id, valueKey)] = newVal;
-                }
-
-                if (noMatches)
-                {
-                    Console.WriteLine("WARNING unable to match '" + match.Value + "'");
-                }
-            }
-
-            foreach ((ValueKey key, object value) in desiredValues.OrderBy(s => s.Key.NodeId).ThenBy(s => s.Key.Key))
-            {
-                // Get existing value
-                Z2MNode node = z2MContainer.GetNode(key.NodeId);
-                Z2MValue z2MValue = z2MContainer.GetValue(key.NodeId, key.Key);
-                object currentVal = z2MValue.value;
-                if (value.Equals(currentVal))
-                {
-                    // Skip this
-                    continue;
-                }
-
-                // > zwavejs2mqtt/wallswitch_4/112/0/2
-                // DATA
-
-                string topic = $"zwavejs2mqtt/{node.name}/{key.Key.Replace('-', '/')}";
-                string setTopic = $"{topic}/set";
-                store.Set(setTopic, JsonConvert.SerializeObject(value), compareTopic: topic);
-            }
+            command = (CommandBase)host.Services.GetRequiredService(commandType);
         }
-
-        private static object ConvertZ2MValue(Z2MValue spec, string val = null)
+        catch (OptionsValidationException e)
         {
-            Z2MState state;
-            if (spec.type == "number" &&
-                spec.list &&
-                (state = spec.states.FirstOrDefault(s => s.text == val)) != null)
-            {
-                return Convert.ChangeType(state.value, typeof(long));
-            }
+            ILogger logger = Log.Logger.ForContext<Program>();
+            logger.Error("One or more options were invalid:");
 
-            if (spec.type == "number")
-            {
-                return Convert.ToInt64(val);
-            }
+            foreach (string eFailure in e.Failures.Where(s => s != null))
+                logger.Error(eFailure);
 
-            throw new Exception();
+            logger.Error("Review the help with '--help' for more information");
+
+            return 3;
         }
 
-        private static JToken Transform(JToken token, Func<JToken, JToken> action)
+        try
         {
-            token = action(token);
-
-            if (token is JObject asObj)
-            {
-                foreach (string key in asObj.Properties().Select(s => s.Name).ToArray())
-                {
-                    JToken item = asObj[key];
-                    item = Transform(item, action);
-                    asObj[key] = item;
-                }
-            }
-            else if (token is JArray asArray)
-            {
-                for (int i = 0; i < asArray.Count; i++)
-                {
-                    JToken item = asArray[i];
-                    item = Transform(item, action);
-                    asArray[i] = item;
-                }
-            }
-
-            return token;
+            await command.ExecuteAsync();
         }
-
-        private static JObject ReadDoc(string kind, string name)
+        catch (Exception e)
         {
-            Type type = typeof(Program);
-            Assembly assembly = type.Assembly;
-
-            string[] available = assembly.GetManifestResourceNames();
-
-            using Stream strm = assembly.GetManifestResourceStream($"{type.Namespace}.{kind}.{name}.json");
-            using StreamReader sr = new StreamReader(strm, Encoding.UTF8);
-
-            return JObject.Parse(sr.ReadToEnd());
-        }
-    }
-
-    class Z2mAssociation : IEquatable<Z2mAssociation>
-    {
-        [JsonProperty("nodeId")]
-        public int NodeId { get; set; }
-
-        [JsonProperty("endpoint")]
-        public int Endpoint { get; set; }
-
-        public Z2mAssociation(int nodeId, int endpoint)
-        {
-            NodeId = nodeId;
-            Endpoint = endpoint;
+            ILogger logger = Log.Logger.ForContext<Program>();
+            logger.Error(e, "An error occurred");
         }
 
-        public bool Equals(Z2mAssociation other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return NodeId == other.NodeId && Endpoint == other.Endpoint;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((Z2mAssociation)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(NodeId, Endpoint);
-        }
-
-        public static bool operator ==(Z2mAssociation left, Z2mAssociation right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(Z2mAssociation left, Z2mAssociation right)
-        {
-            return !Equals(left, right);
-        }
-    }
-
-    class DesiredAssociationsContainer
-    {
-        public Dictionary<string, DesiredAssociations> Nodes { get; set; }
-    }
-
-    class DesiredAssociations
-    {
-        /// <summary>
-        /// Group => Node.Endpoint
-        /// </summary>
-        public Dictionary<int, string[]> Links { get; set; }
-
-        public IEnumerable<Z2mAssociation> GetLinks(Z2MContainer nodes, int groupId)
-        {
-            if (Links == null || !Links.TryGetValue(groupId, out string[] links))
-                yield break;
-
-            foreach (string link in links)
-            {
-                string[] split = link.Split('.');
-                string node = split[0];
-                int endpoint = split.Length == 2 ? Convert.ToInt32(split[1]) : 0;
-
-                if (int.TryParse(node, out int nodeId))
-                {
-                    yield return new Z2mAssociation(nodeId, Convert.ToInt32(split[1]));
-                }
-                else
-                {
-                    Z2MNode target = nodes.GetByName(node).Single();
-                    if (target == null)
-                        throw new Exception();
-
-                    yield return new Z2mAssociation(target.id, endpoint);
-                }
-            }
-        }
+        return 0;
     }
 }

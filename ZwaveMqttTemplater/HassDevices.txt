@@ -1,0 +1,45 @@
+﻿AeotecSmartSwitch7	powerplug_1
+AeotecSmartSwitch7	powerplug_2
+AeotecSmartDimmer6	powerplug_3
+
+AeotecDoorWindowSensor6_basicsetkind	door_1_1
+AeotecDoorWindowSensor6_basicsetkind	window_20_2
+AeotecDoorWindowSensor6_basicsetkind	window_21_2
+AeotecDoorWindowSensor6_basicsetkind	door_30_1
+AeotecDoorWindowSensor6_basicsetkind	door_4_2
+
+AeotecDoorWindowSensor7	window_2_2
+AeotecDoorWindowSensor7	window_3_2
+AeotecDoorWindowSensor7	window_22_1
+AeotecDoorWindowSensor7	door_40_1
+AeotecDoorWindowSensor7	door_40_2
+
+AeotecTrisensor	sensor_44_3
+
+AeotecAerqSensor	sensor_40_3
+AeotecAerqSensor	sensor_50_1
+
+SensativeStick	window_1_2
+SensativeStick	window_1_3
+SensativeStick	window_1_4
+SensativeStick	window_4_3
+SensativeStick	window_5_2
+
+LogicsoftZDB5100	wallswitch_2
+LogicsoftZDB5100	wallswitch_1
+LogicsoftZDB5100	wallswitch_30_1
+LogicsoftZDB5100	wallswitch_30_2
+LogicsoftZDB5100	wallswitch_20
+LogicsoftZDB5100	wallswitch_21
+LogicsoftZDB5100	wallswitch_22
+LogicsoftZDB5100	wallswitch_3
+LogicsoftZDB5100	wallswitch_4
+LogicsoftZDB5100	wallswitch_5
+LogicsoftZDB5100	wallswitch_31
+LogicsoftZBA7140	button_4_4
+LogicsoftZBA7140	button_3_3
+
+NorthQGas9121	meter_gas
+
+VaillantEcotecEbus	EcoTECBoiler
+KamstrupPower	KamstrupPower

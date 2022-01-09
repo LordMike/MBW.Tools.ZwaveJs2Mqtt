@@ -1,0 +1,29 @@
+{
+  "profiles": {
+    "Test": {
+      "commandName": "Project",
+      "commandLineArgs": "list-fw --help",
+      "workingDirectory": "N:\\Git\\Personal\\zwave-mqtt-templater\\ZwaveMqttTemplater"
+    },
+    "HassConfigsCommand": {
+      "commandName": "Project",
+      "commandLineArgs": "hass -d .\\HassDevices.txt product:ZDB5100 -v",
+      "workingDirectory": "N:\\Git\\Personal\\zwave-mqtt-templater\\ZwaveMqttTemplater"
+    },
+    "DeviceConfigsCommand": {
+      "commandName": "Project",
+      "commandLineArgs": "device-configs -f .\\DeviceConfigsFile.txt product:ZDB5100",
+      "workingDirectory": "N:\\Git\\Personal\\zwave-mqtt-templater\\ZwaveMqttTemplater"
+    },
+    "AssociationsGetCommand": {
+      "commandName": "Project",
+      "commandLineArgs": "associations-get -f .\\Associations.json --remove-missing --help",
+      "workingDirectory": "N:\\Git\\Personal\\zwave-mqtt-templater\\ZwaveMqttTemplater"
+    },
+    "AssociationsSetCommand": {
+      "commandName": "Project",
+      "commandLineArgs": "associations-set -f .\\Associations.json name:wallswitch_4 --remove-missing -n",
+      "workingDirectory": "N:\\Git\\Personal\\zwave-mqtt-templater\\ZwaveMqttTemplater"
+    }
+  }
+}

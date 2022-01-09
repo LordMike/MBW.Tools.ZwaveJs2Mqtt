@@ -1,32 +1,56 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Collections.Concurrent;
+using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Extensions.ManagedClient;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ZwaveMqttTemplater.Mqtt;
 
 namespace ZwaveMqttTemplater.Z2M;
 
-class Z2MApiClient
+internal class Z2MApiClient
 {
+    private readonly ILogger<Z2MApiClient> _logger;
     private readonly IManagedMqttClient _mqtt;
+    private readonly IManagedMqttClientOptions _options;
+    private readonly CancellationToken _stoppingToken;
     private readonly string _topicPrefix;
     private int _nextMessageId;
-    private readonly ConcurrentDictionary<int, TaskCompletionSource<MqttApplicationMessage>> _tasks = new();
+    private ConcurrentDictionary<int, TaskCompletionSource<MqttApplicationMessage>> _tasks = new();
 
-    public Z2MApiClient(IManagedMqttClient mqtt, string prefix = "zwavejs2mqtt/")
+    public Z2MApiClient(ILogger<Z2MApiClient> logger, IManagedMqttClient mqtt, IManagedMqttClientOptions options, CancellationToken stoppingToken, string prefix = "zwavejs2mqtt/")
     {
+        _logger = logger;
         _mqtt = mqtt;
+        _options = options;
+        _stoppingToken = stoppingToken;
         _topicPrefix = prefix + "_CLIENTS/ZWAVE_GATEWAY-HomeMQTT/api/";
+
+        _stoppingToken.Register(OnStop);
     }
 
-    public async Task Start()
+    private void OnStop()
     {
+        _logger.LogDebug("Stopping client");
+
+        ConcurrentDictionary<int, TaskCompletionSource<MqttApplicationMessage>>? taskList = Interlocked.Exchange(ref _tasks, null);
+
+        if (taskList != null)
+            foreach (TaskCompletionSource<MqttApplicationMessage> completionSource in taskList.Values)
+                completionSource.TrySetCanceled(_stoppingToken);
+    }
+
+    public async Task Start(CancellationToken token)
+    {
+        _logger.LogDebug("Starting client");
+
+        if (!_mqtt.IsStarted)
+        {
+            _logger.LogDebug("Starting MQTT client");
+
+            await _mqtt.StartAsync(_options);
+        }
+
         string subscription = _topicPrefix + "+";
         await _mqtt.SubscribeAsync(subscription);
 
@@ -35,15 +59,30 @@ class Z2MApiClient
 
     public async Task<Task<MqttApplicationMessage>> SendCommand(string api, object[] args = null, CancellationToken token = default)
     {
+        _logger.LogDebug("Sending command {api} with args {args}", api, args);
+
         string topic = _topicPrefix + api + "/set";
         int messageId = Interlocked.Increment(ref _nextMessageId);
 
         string requestJson = JsonConvert.SerializeObject(new { messageId, args });
 
-        TaskCompletionSource<MqttApplicationMessage> taskCompletion = new TaskCompletionSource<MqttApplicationMessage>();
+        TaskCompletionSource<MqttApplicationMessage> taskCompletion = new();
+
+        ConcurrentDictionary<int, TaskCompletionSource<MqttApplicationMessage>> localTasks = _tasks;
+
+        if (localTasks == null || _stoppingToken.IsCancellationRequested)
+            throw new OperationCanceledException();
 
         _tasks.TryAdd(messageId, taskCompletion);
         await _mqtt.PublishAsync(topic, requestJson);
+
+        localTasks = Interlocked.CompareExchange(ref _tasks, localTasks, localTasks);
+        if (localTasks == null)
+        {
+            // Was stopped before we noticed
+            taskCompletion.TrySetCanceled();
+            throw new OperationCanceledException();
+        }
 
         return taskCompletion.Task;
     }
@@ -51,10 +90,17 @@ class Z2MApiClient
     private Task OnCallback(MqttApplicationMessageReceivedEventArgs arg)
     {
         string topic = arg.ApplicationMessage.Topic;
+
+        _logger.LogTrace("Received callback for topic {topic}", topic);
+
         if (!topic.StartsWith(_topicPrefix, StringComparison.Ordinal))
             return Task.CompletedTask;
 
-        JObject obj = JObject.Parse(arg.ApplicationMessage.ConvertPayloadToString());
+        string payloadString = arg.ApplicationMessage.ConvertPayloadToString();
+
+        _logger.LogDebug("Received callback for topic {topic} with message {message}", topic, payloadString);
+
+        JObject obj = JObject.Parse(payloadString);
         JToken origin = obj["origin"];
         int messageId = origin.Value<int>("messageId");
 
@@ -65,44 +111,5 @@ class Z2MApiClient
         tcs.SetResult(message);
 
         return Task.CompletedTask;
-    }
-
-}
-
-static class Z2MApiClientExtensions
-{
-    private static async Task<TResult> InvokeJson<TResult>(this Z2MApiClient client, string api, object[] args = null)
-    {
-        Task<MqttApplicationMessage> tsk = await client.SendCommand("getNodes");
-        MqttApplicationMessage res = await tsk;
-
-        string json = res.ConvertPayloadToString();
-
-        Z2MApiCallResult<TResult> result = JsonConvert.DeserializeObject<Z2MApiCallResult<TResult>>(json);
-
-        if (!result.Success)
-            throw new Exception("");
-
-        return result.Result;
-    }
-
-    public static async Task<List<Z2MNode>> GetNodes(this Z2MApiClient client)
-    {
-        return await client.InvokeJson<List<Z2MNode>>("getNodes");
-    }
-
-    public static async Task PingNode(this Z2MApiClient client, int nodeId)
-    {
-        await await client.SendCommand("pingNode", new object[] { nodeId });
-    }
-
-    public static async Task HealNode(this Z2MApiClient client, int nodeId)
-    {
-        await await client.SendCommand("healNode", new object[] { nodeId });
-    }
-
-    public static async Task RefreshCCValues(this Z2MApiClient client, int nodeId, int commandClass)
-    {
-        await await client.SendCommand("refreshCCValues", new object[] { nodeId , commandClass });
     }
 }

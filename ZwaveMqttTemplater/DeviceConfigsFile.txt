@@ -13,7 +13,7 @@
 # 0 No dimming
 # 1 Trailing edge dimming. (Default)
 # 2 Leading edge dimming
-product:ZDB5100	112-0-4	1
+product:ZDB5100 112-0-4	1
 name:wallswitch_30_2	112-0-4	0 # Disable dimmer on some switches
 
 # Secure messages
@@ -65,7 +65,7 @@ product:ZDB5100	112-0-47-65280	0
 product:ZDB5100	112-0-47-16711680	0
 product:ZDB5100	112-0-47-4278190080	0
 
-product:ZDB5100	112-0-10	0  # Disable enhanced LED control
+product:ZDB5100	112-0-10	0 # Disable enhanced LED control
 product:ZDB5100	112-0-5	10  # Minimum dimming level
 product:ZDB5100	112-0-2	2 # Dimming over Ns
 product:ZDB5100	112-0-3	0 # On/off takes Ns
@@ -122,7 +122,7 @@ product:ZWA008	112-0-14	0 # Disable tilt sensor
 # Sound levels
 product:ZW162	121-1-defaultVolume	0
 product:ZW162	121-2-defaultVolume	0
-product:ZW162	121-3-defaultVolume	25 # Doorbell 1
+product:ZW162	121-3-defaultVolume	25  # Doorbell 1
 product:ZW162	121-4-defaultVolume	0
 product:ZW162	121-5-defaultVolume	0
 product:ZW162	121-6-defaultVolume	0
@@ -138,7 +138,7 @@ product:ZW162 Doorbell 6	121-3-defaultToneId	1
 product:ZW164	121-1-defaultVolume	0
 product:ZW164	121-2-defaultVolume	0
 product:ZW164	121-3-defaultVolume	0
-product:ZW164	121-4-defaultVolume	25 # Doorbell 2 (for some reason, doorbell 1 is aka. "Tampering")
+product:ZW164	121-4-defaultVolume	25  # Doorbell 2 (for some reason, doorbell 1 is aka. "Tampering")
 product:ZW164	121-5-defaultVolume	0
 product:ZW164	121-6-defaultVolume	0
 product:ZW164	121-7-defaultVolume	0
@@ -152,12 +152,12 @@ product:ZW164	121-4-defaultToneId	1
 product:ZW099	112-0-81	0	# Disable LED mode
 
 # Readings frequency
-product:ZW099 112-0-101	7	# Report W, V, kWh
-product:ZW099 112-0-111	600	# Report every Ns
+product:ZW099 112-0-101	7 # Report W, V, kWh
+product:ZW099 112-0-111	600 # Report every Ns
 
-product:ZW099	112-0-90	1	# Report on change
-product:ZW099	112-0-91	25	# Report when N W change
-product:ZW099	112-0-92	20	# Report when N% W-change
+product:ZW099	112-0-90	1 # Report on change
+product:ZW099	112-0-91	25  # Report when N W change
+product:ZW099	112-0-92	20  # Report when N% W-change
 
 ### ZW175 Smart Switch 7 (Aeotec Limited) 
 # https://devices.zwave-js.io/?jumpTo=0x0371:0x0003:0x00af:0.0

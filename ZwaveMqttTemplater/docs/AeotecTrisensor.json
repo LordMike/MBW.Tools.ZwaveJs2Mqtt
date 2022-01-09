@@ -10,11 +10,10 @@
   "binary_sensor": {
     "motion": {
       "device_class": "motion",
-      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/48/0/Motion",
       "name": "NODE_NAME_motion",
-      "payload_off": false,
-      "payload_on": true,
-      "state_topic": "zwavejs2mqtt/NODE_NAME/48/0/Motion",
+      "payload_off": 0,
+      "payload_on": 8,
+      "state_topic": "zwavejs2mqtt/NODE_NAME/113/0/Home_Security/Motion_sensor_status",
       "unique_id": "zwave2mqtt_NODE_NAME_motion",
       "value_template": "{{ value_json.value }}"
     }
@@ -22,7 +21,6 @@
   "sensor": {
     "battery": {
       "device_class": "battery",
-      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/128/0/level",
       "name": "NODE_NAME_battery",
       "state_topic": "zwavejs2mqtt/NODE_NAME/128/0/level",
       "unique_id": "zwave2mqtt_NODE_NAME_battery",
@@ -31,7 +29,6 @@
     },
     "temperature": {
       "device_class": "temperature",
-      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/49/0/Air_temperature",
       "name": "NODE_NAME_temperature",
       "state_topic": "zwavejs2mqtt/NODE_NAME/49/0/Air_temperature",
       "unique_id": "zwave2mqtt_NODE_NAME_temperature",
@@ -40,7 +37,6 @@
     },
     "illuminance": {
       "device_class": "illuminance",
-      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/49/0/Illuminance",
       "name": "NODE_NAME_illuminance",
       "state_topic": "zwavejs2mqtt/NODE_NAME/49/0/Illuminance",
       "unique_id": "zwave2mqtt_NODE_NAME_illuminance",

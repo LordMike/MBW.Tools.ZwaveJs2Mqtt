@@ -1,12 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using MQTTnet;
+﻿using MQTTnet;
 using MQTTnet.Client.Receiving;
 using MQTTnet.Extensions.ManagedClient;
 
-namespace ZwaveMqttTemplater.Z2M;
+namespace ZwaveMqttTemplater.Mqtt;
 
-static class MqttHelpers
+internal static class MqttHelpers
 {
     public static void AddApplicationMessageReceivedHandler(this IManagedMqttClient client, Func<MqttApplicationMessageReceivedEventArgs, Task> newHandler)
     {
@@ -26,7 +24,7 @@ static class MqttHelpers
         handler.OnMessage -= newHandler;
     }
 
-    class RollingDelegateHandler : IMqttApplicationMessageReceivedHandler
+    private class RollingDelegateHandler : IMqttApplicationMessageReceivedHandler
     {
         public event Func<MqttApplicationMessageReceivedEventArgs, Task> OnMessage;
 
