@@ -33,14 +33,14 @@ jobs:
       run: "[ -f .ci-skip-tests ] && echo 'Skipping tests' || dotnet test --no-build --verbosity normal"
 
     - name: Pack
-      if: github.ref == 'refs/heads/master'
       run: |
-        dotnet publish -o Build/win-x64 -r win-x64 --self-contained -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true
-        dotnet publish -o Build/linux-x64 -r linux-x64 --self-contained -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true
-        dotnet publish -o Build/osx-x64 -r osx-x64 --self-contained -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true
+        dotnet publish -r win-x64 -p:AssemblyName=MBW.Tools.ZwaveJs2Mqtt.win -o Build --self-contained -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -p:GenerateDocumentationFile=False
+        dotnet publish -r linux-x64 -p:AssemblyName=MBW.Tools.ZwaveJs2Mqtt.linux -o Build --self-contained -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -p:GenerateDocumentationFile=False
+        dotnet publish -r osx-x64 -p:AssemblyName=MBW.Tools.ZwaveJs2Mqtt.osx -o Build --self-contained -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -p:GenerateDocumentationFile=False
     
     - name: Promote to release
       uses: softprops/action-gh-release@v1
       with:
+        fail_on_unmatched_files: true
         files: |
           Build/**
