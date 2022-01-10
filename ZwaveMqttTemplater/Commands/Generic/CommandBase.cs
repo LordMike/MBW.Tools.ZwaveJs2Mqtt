@@ -28,5 +28,5 @@ abstract internal class CommandBase
         return OnExecuteAsync(_lifeTime.ApplicationStopping);
     }
 
-    protected abstract Task OnExecuteAsync(CancellationToken token);
+    abstract protected Task OnExecuteAsync(CancellationToken token);
 }

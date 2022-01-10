@@ -26,7 +26,7 @@ internal class RootCommand : CommandBase
         _cmdHelper = cmdHelper;
     }
 
-    protected override async Task OnExecuteAsync(CancellationToken token)
+    protected override Task OnExecuteAsync(CancellationToken token)
     {
         _cmdHelper.PrintHelp(Console.Out, GetType());
 
@@ -42,5 +42,6 @@ internal class RootCommand : CommandBase
         Console.WriteLine("flag:awake           Filter by z-wave awake devices");
         Console.WriteLine("flag:asleep          Filter by z-wave asleep devices");
         Console.WriteLine();
+        return Task.CompletedTask;
     }
 }

@@ -15,7 +15,7 @@ namespace ZwaveMqttTemplater.Commands;
 [Command("device-configs", "Config management devices", typeof(Options))]
 internal class DeviceConfigsCommand : CommandBase
 {
-    private static readonly Regex LineRegex = new(@"^([^#\t]+)\t([^\t]+)\t([^\t ]+)\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private readonly static Regex LineRegex = new(@"^([^#\t]+)\t([^\t]+)\t([^\t ]+)\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private readonly ILogger<DeviceConfigsCommand> _logger;
     private readonly Options _options;
     private readonly MqttStore _store;
@@ -45,7 +45,7 @@ internal class DeviceConfigsCommand : CommandBase
         _store = store;
     }
 
-    protected override async Task OnExecuteAsync(CancellationToken token)
+    protected async override Task OnExecuteAsync(CancellationToken token)
     {
         _logger.LogInformation("Managing device configs with filter: {Filter}", _options.Filter);
 

@@ -5,7 +5,7 @@ namespace ZwaveMqttTemplater.Helpers;
 [AttributeUsage(AttributeTargets.Property)]
 internal class FileExistsAttribute : ValidationAttribute
 {
-    protected override ValidationResult? IsValid(object value, ValidationContext validationContext)
+    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
         if (value is not string asString)
             throw new Exception("Unable to use " + nameof(FileExistsAttribute) + " on this property");

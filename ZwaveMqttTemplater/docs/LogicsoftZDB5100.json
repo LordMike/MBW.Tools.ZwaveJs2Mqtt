@@ -12,9 +12,9 @@
       // We cannot use _both_ binary set and multilevel set here, as they don't follow each other on the device (no reports)
       // Sending commands to both will update both, but will interfere with brightness (sending true to binary, changes brightness)
       "brightness_command_topic": "zwavejs2mqtt/NODE_NAME/38/5/targetValue/set",
-      "brightness_scale": 99,
+      "brightness_scale": 60,
       "brightness_state_topic": "zwavejs2mqtt/NODE_NAME/38/5/currentValue",
-      "brightness_value_template": "{{ value_json.value }}",
+      "brightness_value_template": "{{ value_json.value if value_json.value <= 60 else 60 }}",
       "command_topic": "zwavejs2mqtt/NODE_NAME/37/5/targetValue/set",
       "name": "NODE_NAME_dimmer",
       "on_command_type": "brightness",

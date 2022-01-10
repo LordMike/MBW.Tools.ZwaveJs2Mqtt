@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 using ZwaveMqttTemplater.Mqtt;
 using ZwaveMqttTemplater.Z2M;
 using ZwaveMqttTemplater.Z2M.Models;
@@ -59,11 +60,9 @@ internal static class CommandHelpers
             Write($"{prompt} {answerHint}", promptColor, promptBgColor);
             Console.Write(' ');
 
-            string? resp;
+            string resp;
             using (ShowCursor())
-            {
                 resp = Console.ReadLine()?.ToLower()?.Trim();
-            }
 
             if (string.IsNullOrEmpty(resp))
             {
@@ -112,6 +111,7 @@ internal static class CommandHelpers
     {
         private readonly bool _original;
 
+        [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Handled locally")]
         public CursorState()
         {
             try

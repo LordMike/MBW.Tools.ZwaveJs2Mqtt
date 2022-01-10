@@ -33,7 +33,7 @@ internal class Z2MApiClient
     {
         _logger.LogDebug("Stopping client");
 
-        ConcurrentDictionary<int, TaskCompletionSource<MqttApplicationMessage>>? taskList = Interlocked.Exchange(ref _tasks, null);
+        ConcurrentDictionary<int, TaskCompletionSource<MqttApplicationMessage>> taskList = Interlocked.Exchange(ref _tasks, null);
 
         if (taskList != null)
             foreach (TaskCompletionSource<MqttApplicationMessage> completionSource in taskList.Values)

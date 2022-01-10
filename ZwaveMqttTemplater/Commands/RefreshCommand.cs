@@ -35,7 +35,7 @@ internal class RefreshCommand : CommandBase
         _options = options;
     }
 
-    protected override async Task OnExecuteAsync(CancellationToken token)
+    protected async override Task OnExecuteAsync(CancellationToken token)
     {
         object ccLogSelection = _options.AllClasses ? "all" : _options.CommandClasses;
         _logger.LogInformation("Refreshing {CommandClasses} with filter: {Filter}", ccLogSelection, _options.Filter);

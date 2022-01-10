@@ -25,7 +25,7 @@ internal class ListFirmwaresCommand : CommandBase
         _options = options;
     }
 
-    protected override async Task OnExecuteAsync(CancellationToken token)
+    protected async override Task OnExecuteAsync(CancellationToken token)
     {
         _logger.LogInformation("Listing firmwares with filter: {Filter}", _options.Filter);
 

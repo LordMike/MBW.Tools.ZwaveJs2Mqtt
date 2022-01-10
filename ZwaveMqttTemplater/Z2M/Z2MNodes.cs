@@ -5,7 +5,7 @@ namespace ZwaveMqttTemplater.Z2M;
 
 internal class Z2MNodes
 {
-    private static readonly Regex FilterRegex = new(@"\b(?<type>\w+):(?<value>[\w\s\d\-]+)\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private readonly static Regex FilterRegex = new(@"\b(?<type>\w+):(?<value>[\w\s\d\-]+)\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private readonly Dictionary<int, Z2MNode> _nodes;
 

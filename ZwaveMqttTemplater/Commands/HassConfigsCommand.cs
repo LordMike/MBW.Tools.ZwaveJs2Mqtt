@@ -46,7 +46,7 @@ internal class HassConfigsCommand : CommandBase
         _store = store;
     }
 
-    protected override async Task OnExecuteAsync(CancellationToken token)
+    protected async override Task OnExecuteAsync(CancellationToken token)
     {
         _logger.LogInformation("Managing HASS configs with filter: {Filter}", _options.Filter);
 

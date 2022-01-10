@@ -47,11 +47,7 @@ internal class CommandLineHelper<TBaseType>
 
         command.SetHandler(() => { });
 
-        CommandDetails details = new()
-        {
-            Command = command,
-            CommandType = commandType
-        };
+        CommandDetails details = new(command, commandType);
 
         CommandAttribute? commandAttribute = commandType.GetCustomAttribute<CommandAttribute>();
         if (commandAttribute?.OptionsType != null)
@@ -110,6 +106,13 @@ internal class CommandLineHelper<TBaseType>
 
         Dictionary<string, string> valueRes = new(StringComparer.OrdinalIgnoreCase);
 
+        void ApplyArray(string keyPrefix, Array values)
+        {
+            int i = 0;
+            foreach (object value in values)
+                valueRes.Add(keyPrefix + ":" + i++, value!.ToString()!);
+        }
+
         void Apply(CommandDetails details)
         {
             foreach ((Option option, PropertyInfo property) option in details.Options)
@@ -118,14 +121,19 @@ internal class CommandLineHelper<TBaseType>
                     continue;
 
                 object? value = res.GetValueForOption(option.option);
-                valueRes.Add(option.property.Name, value!.ToString()!);
+                if (value is Array asArray)
+                    ApplyArray(option.property.Name, asArray);
+                else
+                    valueRes.Add(option.property.Name, value!.ToString()!);
             }
 
             foreach ((Argument argument, PropertyInfo property) option in details.Arguments)
             {
                 object? value = res.GetValueForArgument(option.argument);
 
-                if (value != null)
+                if (value is Array asArray)
+                    ApplyArray(option.property.Name, asArray);
+                else if (value != null)
                     valueRes.Add(option.property.Name, value!.ToString()!);
             }
         }
@@ -185,6 +193,13 @@ internal class CommandLineHelper<TBaseType>
     private class CommandDetails
     {
         public Command Command;
+
+        public CommandDetails(Command command, Type commandType)
+        {
+            Command = command;
+            CommandType = commandType;
+        }
+
         public Type CommandType { get; set; }
         public Type? OptionsType { get; set; }
 

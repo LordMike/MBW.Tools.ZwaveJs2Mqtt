@@ -39,7 +39,7 @@ internal class AssociationsGetCommand : CommandBase
         _options = options;
     }
 
-    protected override async Task OnExecuteAsync(CancellationToken token)
+    protected async override Task OnExecuteAsync(CancellationToken token)
     {
         _logger.LogInformation("Dumping associations with filter: {Filter}", _options.Filter);
 

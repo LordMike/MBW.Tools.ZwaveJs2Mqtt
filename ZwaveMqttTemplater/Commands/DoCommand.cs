@@ -39,9 +39,9 @@ internal class DoCommand : CommandBase
         _options = options;
     }
 
-    protected override async Task OnExecuteAsync(CancellationToken token)
+    protected async override Task OnExecuteAsync(CancellationToken token)
     {
-        string? apiName = _options.Operation.AsString(EnumFormat.EnumMemberValue);
+        string apiName = _options.Operation.AsString(EnumFormat.EnumMemberValue);
 
         _logger.LogInformation("Performing {CommandClasses} with filter: {Filter}", _options.Operation, _options.Filter);
 

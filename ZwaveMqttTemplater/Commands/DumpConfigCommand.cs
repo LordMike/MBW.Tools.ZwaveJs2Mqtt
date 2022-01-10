@@ -28,7 +28,7 @@ internal class DumpConfigCommand : CommandBase
         _options = options;
     }
 
-    protected override async Task OnExecuteAsync(CancellationToken token)
+    protected async override Task OnExecuteAsync(CancellationToken token)
     {
         _logger.LogInformation("Dumping configs with filter: {Filter}", _options.Filter);
 
