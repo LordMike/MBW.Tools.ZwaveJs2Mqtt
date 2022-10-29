@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MQTTnet;
 using MQTTnet.Client.Options;
+using MQTTnet.Extensions;
 using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Formatter;
 using Serilog;
@@ -98,6 +99,7 @@ internal class Program
                             .WithClientOptions(new MqttClientOptionsBuilder()
                                 .WithClientId("mqtt_speccer")
                                 .WithTcpServer(option.MqttHost, option.MqttPort)
+                                .WithCredentials("mqtt_speccer", "mqtt_speccer")
                                 .WithCleanSession()
                                 .WithProtocolVersion(MqttProtocolVersion.V500)
                                 .Build())
