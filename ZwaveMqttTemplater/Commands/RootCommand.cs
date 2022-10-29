@@ -41,6 +41,8 @@ internal class RootCommand : CommandBase
         Console.WriteLine("id:25                Filter by z-wave node id");
         Console.WriteLine("flag:awake           Filter by z-wave awake devices");
         Console.WriteLine("flag:asleep          Filter by z-wave asleep devices");
+        Console.WriteLine("flag:battery         Filter by battery powered z-wave devices");
+        Console.WriteLine("flag:has-wakeup      Filter by z-wave devices with the WakeUp CC");
         Console.WriteLine();
         return Task.CompletedTask;
     }

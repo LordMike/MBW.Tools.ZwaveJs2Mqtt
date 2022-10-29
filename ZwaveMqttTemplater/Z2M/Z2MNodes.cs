@@ -105,6 +105,10 @@ internal class Z2MNodes
                         selection = selection.Where(s => s.status == "Alive");
                     else if (value == "asleep")
                         selection = selection.Where(s => s.status == "Asleep");
+                    else if (value == "battery")
+                        selection = selection.Where(s => s.values.Any(x => x.Value.commandClass == (int)CommandClass.BatteryCC));
+                    else if (value == "has-wakeup")
+                        selection = selection.Where(s => s.values.Any(x => x.Value.commandClass == (int)CommandClass.WakeUpCC));
                     break;
                 default:
                     throw new Exception();
