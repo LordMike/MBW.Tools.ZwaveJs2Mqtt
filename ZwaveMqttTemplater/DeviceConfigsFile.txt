@@ -1,12 +1,14 @@
 ﻿## Wakeup
 # 259200 = 3days
 # 604800 = 7days
+# 82800 = 23hours
 #product:ZWA008	132-0-wakeUpInterval	259200	# Door/Window Sensor 7
 #product:ZW112	132-0-wakeUpInterval	259200	# Door/Window Sensor 6
 #product:ZWA005	132-0-wakeUpInterval	259200	# TriSensor
 #product:ZWA009	132-0-wakeUpInterval	259200	# Aerq
 #product:11-01-011	132-0-wakeUpInterval	259200	# Sensative stick
 #product:ZBA7140	132-0-wakeUpInterval	259200	# ZBA7140 wall controller
+flag:has-wakeup	132-0-wakeUpInterval	82800	# All battery devices, default to 23 hours
 
 ### ZDB5100
 # Enable dimming

@@ -40,36 +40,36 @@
   "sensor": {
     "electricity_a_meter": {
       "device_class": "power",
-      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66817",
+      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/1/value/66817",
       "name": "NODE_NAME_electricity_a_meter",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66817",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/50/1/value/66817",
       "unique_id": "zwave2mqtt_NODE_NAME_electricity_a_meter",
       "unit_of_measurement": "A",
       "value_template": "{{ value_json.value }}"
     },
     "electricity_kwh_meter": {
       "device_class": "power",
-      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/65537",
+      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/1/value/65537",
       "name": "NODE_NAME_electricity_kwh_meter",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/65537",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/50/1/value/65537",
       "unique_id": "zwave2mqtt_NODE_NAME_kwh_meter",
       "unit_of_measurement": "kWh",
       "value_template": "{{ value_json.value }}"
     },
     "electricity_v_meter": {
       "device_class": "power",
-      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66561",
+      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/1/value/66561",
       "name": "NODE_NAME_electricity_v_meter",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66561",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/50/1/value/66561",
       "unique_id": "zwave2mqtt_NODE_NAME_electricity_v_meter",
       "unit_of_measurement": "V",
       "value_template": "{{ value_json.value }}"
     },
     "electricity_w_meter": {
       "device_class": "power",
-      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66049",
+      "json_attributes_topic": "zwavejs2mqtt/NODE_NAME/50/1/value/66049",
       "name": "NODE_NAME_electricity_w_meter",
-      "state_topic": "zwavejs2mqtt/NODE_NAME/50/0/value/66049",
+      "state_topic": "zwavejs2mqtt/NODE_NAME/50/1/value/66049",
       "unique_id": "zwave2mqtt_NODE_NAME_electricity_w_meter",
       "unit_of_measurement": "W",
       "value_template": "{{ value_json.value }}"

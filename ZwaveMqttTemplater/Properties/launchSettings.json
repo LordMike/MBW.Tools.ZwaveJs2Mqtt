@@ -5,6 +5,11 @@
       "commandLineArgs": "list-fw --help",
       "workingDirectory": "N:\\Git\\Personal\\zwave-mqtt-templater\\ZwaveMqttTemplater"
     },
+    "ListFwAwake": {
+      "commandName": "Project",
+      "commandLineArgs": "list-fw flag:awake",
+      "workingDirectory": "N:\\Git\\Personal\\zwave-mqtt-templater\\ZwaveMqttTemplater"
+    },
     "HassConfigsCommand": {
       "commandName": "Project",
       "commandLineArgs": "hass -d .\\HassDevices.txt product:ZDB5100 -v",
