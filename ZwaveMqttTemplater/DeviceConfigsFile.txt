@@ -19,19 +19,19 @@ product:ZDB5100 112-0-4	1
 name:wallswitch_30_2	112-0-4	0 # Disable dimmer on some switches
 
 # Secure messages
-product:ZDB5100	112-0-15-1	1
-product:ZDB5100	112-0-15-2	1
-product:ZDB5100	112-0-15-4	1
-product:ZDB5100	112-0-15-8	1
-product:ZDB5100	112-0-15-16	1
-product:ZDB5100	112-0-15-32	1
-product:ZDB5100	112-0-15-64	1
-product:ZDB5100	112-0-15-128	1
-product:ZDB5100	112-0-15-256	1
-product:ZDB5100	112-0-15-512	1
-product:ZDB5100	112-0-15-1024	1
-product:ZDB5100	112-0-15-2048	1
-product:ZDB5100	112-0-15-4096	1
+product:ZDB5100	112-0-15-1	0
+product:ZDB5100	112-0-15-2	0
+product:ZDB5100	112-0-15-4	0
+product:ZDB5100	112-0-15-8	0
+product:ZDB5100	112-0-15-16	0
+product:ZDB5100	112-0-15-32	0
+product:ZDB5100	112-0-15-64	0
+product:ZDB5100	112-0-15-128	0
+product:ZDB5100	112-0-15-256	0
+product:ZDB5100	112-0-15-512	0
+product:ZDB5100	112-0-15-1024	0
+product:ZDB5100	112-0-15-2048	0
+product:ZDB5100	112-0-15-4096	0
 
 # Remove default colors
 product:ZDB5100	112-0-22-255	0
@@ -103,6 +103,10 @@ product:ZDB5100	112-0-20	0
 product:ZDB5100	112-0-28	0
 product:ZDB5100	112-0-36	0
 product:ZDB5100	112-0-44	0
+product:ZDB5100	112-0-21	0	# Direct control of RGB
+product:ZDB5100	112-0-29	0	# Direct control of RGB
+product:ZDB5100	112-0-37	0	# Direct control of RGB
+product:ZDB5100	112-0-45	0	# Direct control of RGB
 
 ### Sensative Strips
 product:11-01-011	112-0-1	0 # Send Binary Sensor reports
